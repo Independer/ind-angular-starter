@@ -2,7 +2,6 @@
  * Angular bootstraping
  */
 import { platformBrowser } from '@angular/platform-browser';
-import { decorateModuleRef } from './app/environment';
 import { enableProdMode } from '@angular/core';
 /*
  * App Module
@@ -17,8 +16,7 @@ enableProdMode();
  */
 export function main(): Promise<any> {
   return platformBrowser()
-    .bootstrapModuleFactory(AppModuleNgFactory)
-    .then(decorateModuleRef)
+    .bootstrapModuleFactory(AppModuleNgFactory)    
     .catch((err) => console.error(err));
 }
 

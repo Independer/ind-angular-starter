@@ -15,20 +15,7 @@ namespace IndependerStarter.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.HashedMain = GetHashedBundle("main");
-            ViewBag.HashedPolifills = GetHashedBundle("polyfills");
-
             return View();
         }
-
-        public string GetHashedBundle(string name)
-        {
-            var basePath = env.WebRootPath + "//dist//";
-            var info = new System.IO.DirectoryInfo(basePath);
-            var file = info.GetFiles().FirstOrDefault(f => f.Name.StartsWith(name + ".") && !f.Name.EndsWith("bundle.map"));
-
-            return file.Name;
-        }
-
     }
 }
