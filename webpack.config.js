@@ -14,6 +14,7 @@ const IgnorePlugin = require('webpack/lib/IgnorePlugin');
 const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const V8LazyParseWebpackPlugin = require('v8-lazy-parse-webpack-plugin');
+const ngcWebpack = require('ngc-webpack');
 
 const env = process.env.ASPNETCORE_ENVIRONMENT || 'Development';
 const isServer = process.argv.indexOf('--env.SERVER_BUILD') >= 0;
@@ -204,6 +205,11 @@ function makeWebpackConfig() {
       /facade(\\|\/)math/,
       helpers.root('node_modules/@angular/core/src/facade/math.js')
     ),
+
+    new ngcWebpack.NgcWebpackPlugin({
+      disabled: !isAot,
+      tsConfig: helpers.root('tsconfig.webpack.json')
+    })
   ];
 
   if (!isServer) {
