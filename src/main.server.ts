@@ -1,6 +1,5 @@
 import './__2.1.1.workaround.ts';
-import 'angular2-universal-polyfills';
-import "core-js/es6";
+import 'angular2-universal-polyfills/node';
 import 'ts-helpers';
 import 'zone.js';
 import { createServerRenderer, RenderResult } from 'aspnet-prerendering';

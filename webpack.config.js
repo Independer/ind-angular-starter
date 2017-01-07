@@ -15,14 +15,15 @@ const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const V8LazyParseWebpackPlugin = require('v8-lazy-parse-webpack-plugin');
 
-const env = process.env.ASPNETCORE_ENVIRONMENT;
+const env = process.env.ASPNETCORE_ENVIRONMENT || 'Development';
+const isServer = process.argv.indexOf('--env.SERVER_BUILD') >= 0;
 const isDev = process.env.ASPNETCORE_ENVIRONMENT === 'Production' ? false : true;
 const isProd = !isDev;
 const isAot = helpers.hasNpmFlag('aot');
 
-function makeWebpackConfig(isServer) {
+function makeWebpackConfig() {
 
-  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ ' + env + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ ' + env + (isServer ? ' (SERVER)' : '') + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
   var config = {};
 
@@ -56,7 +57,7 @@ function makeWebpackConfig(isServer) {
   };
 
   if (isServer) {
-    config.output.path = helpers.root('wwwroot', 'dist', 'server');
+    config.output.path = helpers.root('wwwroot', 'serverdist');
     config.output.filename = '[name].js';
     config.output.libraryTarget = 'commonjs';
   }
@@ -369,4 +370,4 @@ function makeWebpackConfig(isServer) {
   return config;
 }
 
-module.exports = makeWebpackConfig(true);
+module.exports = makeWebpackConfig();
