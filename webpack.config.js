@@ -13,7 +13,6 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const IgnorePlugin = require('webpack/lib/IgnorePlugin');
 const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
-const WebpackMd5Hash = require('webpack-md5-hash');
 const V8LazyParseWebpackPlugin = require('v8-lazy-parse-webpack-plugin');
 
 const env = process.env.ASPNETCORE_ENVIRONMENT;
@@ -21,13 +20,17 @@ const isDev = process.env.ASPNETCORE_ENVIRONMENT === 'Production' ? false : true
 const isProd = !isDev;
 const isAot = helpers.hasNpmFlag('aot');
 
-function makeWebpackConfig() {
+function makeWebpackConfig(isServer) {
 
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ ' + env + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
   var config = {};
 
-  if (isDev) {
+  config.target = isServer ? 'node' : 'web';
+
+  if (isServer) {
+    config.devtool = 'inline-source-map';
+  } else if (isDev) {
     config.devtool = 'cheap-module-source-map';
   } else {
     config.devtool = 'source-map';
@@ -38,23 +41,37 @@ function makeWebpackConfig() {
   // You can pass false to disable it.
   //config.cache = false,
 
-  config.entry = {
-    'polyfills': './src/polyfills.browser.ts',
-    'main': isAot ? './src/main.browser.aot.ts' : './src/main.browser.ts'
-  };
+  config.entry = {};
+
+  if (isServer) {
+    config.entry['main-server'] = isAot ? './src/main.server.ts' : './src/main.server.ts';
+  }
+  else {
+    config.entry['polyfills'] = './src/polyfills.browser.ts';
+    config.entry['main'] = isAot ? './src/main.browser.aot.ts' : './src/main.browser.ts';
+  }
 
   config.output = {
-    path: helpers.root('wwwroot', 'dist'),
-    filename: '[name].bundle.js',
-    sourceMapFilename: '[file].map',
-    chunkFilename: '[id].chunk.js',
-    publicPath: '/dist/'
+    
   };
 
-  if (isDev) {
-    config.output.library = 'ac_[name]';
-    config.output.libraryTarget = 'var';
+  if (isServer) {
+    config.output.path = helpers.root('wwwroot', 'dist', 'server');
+    config.output.filename = '[name].js';
+    config.output.libraryTarget = 'commonjs';
   }
+  else {
+    config.output.path = helpers.root('wwwroot', 'dist');
+    config.output.filename = '[name].bundle.js';
+    config.output.sourceMapFilename = '[file].map';
+    config.output.chunkFilename = '[id].chunk.js';
+    config.output.publicPath = '/dist/';
+    
+    if (isDev) {
+      config.output.library = 'ac_[name]';
+      config.output.libraryTarget = 'var';
+    }
+  }  
 
   config.resolve = {
 
@@ -75,7 +92,7 @@ function makeWebpackConfig() {
       {
         test: /\.ts$/,
         use: [
-          'awesome-typescript-loader?{configFileName: "tsconfig.webpack.json"}',
+          !isAot ? 'awesome-typescript-loader' : 'awesome-typescript-loader?{configFileName: "tsconfig.webpack.json"}',
           'angular2-template-loader',
           'angular-router-loader?loader=system&genDir=compiled/src/app&aot=' + isAot
         ],
@@ -108,7 +125,7 @@ function makeWebpackConfig() {
       // Returns file content as string
       {
         test: /\.css$/,
-        loader: isDev ? 'style-loader!css-loader' : ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader' }),
+        loader: isServer ? ('to-string-loader!css-loader') : (isDev ? 'style-loader!css-loader' : ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader' })),
         include: [helpers.root('src', 'styles')]
       },
 
@@ -116,10 +133,10 @@ function makeWebpackConfig() {
       // Returns compiled css content as string
       {
         test: /\.scss$/,
-        loader: isDev ? 'style-loader!css-loader!sass-loader' : ExtractTextPlugin.extract({
+        loader: isServer ? ('to-string-loader!css-loader!sass-loader') : (isDev ? 'style-loader!css-loader!sass-loader' : ExtractTextPlugin.extract({
           fallbackLoader: 'style-loader',
           loader: 'css-loader!sass-loader'
-        }),
+        })),
         include: [helpers.root('src', 'styles')]
       },
 
@@ -150,24 +167,7 @@ function makeWebpackConfig() {
     }),
 
     // Do type checking in a separate process, so webpack don't need to wait.
-    new CheckerPlugin(),
-
-    // Shares common code between the pages.It identifies common modules and put them into a commons chunk.
-    // See: https://github.com/webpack/docs/wiki/optimization#multi-page-app
-    new CommonsChunkPlugin({
-      name: 'polyfills',
-      chunks: ['polyfills']
-    }),
-    // This enables tree shaking of the vendor modules
-    new CommonsChunkPlugin({
-      name: 'vendor',
-      chunks: ['main'],
-      minChunks: module => /node_modules\//.test(module.resource)
-    }),
-    // Specify the correct order the scripts will be injected in
-    new CommonsChunkPlugin({
-      name: ['polyfills', 'vendor'].reverse()
-    }),
+    new CheckerPlugin(),    
 
     // Provides context to Angular's use of System.import. See: https://github.com/angular/angular/issues/11580
     new ContextReplacementPlugin(
@@ -205,21 +205,46 @@ function makeWebpackConfig() {
     ),
   ];
 
-  if (isDev) {
+  if (!isServer) {
     config.plugins = config.plugins.concat([
-      // Eperimental. See: https://gist.github.com/sokra/27b24881210b56bbaff7
-      new LoaderOptionsPlugin({
-        debug: true,
-        options: {
-
-        }
-      })
+      // Shares common code between the pages.It identifies common modules and put them into a commons chunk.
+      // See: https://github.com/webpack/docs/wiki/optimization#multi-page-app
+      new CommonsChunkPlugin({
+        name: 'polyfills',
+        chunks: ['polyfills']
+      }),
+      // This enables tree shaking of the vendor modules
+      new CommonsChunkPlugin({
+        name: 'vendor',
+        chunks: ['main'],
+        minChunks: module => /node_modules\//.test(module.resource)
+      }),
+      // Specify the correct order the scripts will be injected in
+      new CommonsChunkPlugin({
+        name: ['polyfills', 'vendor'].reverse()
+      }),
     ]);
-  } else {
-    config.plugins = config.plugins.concat([
-      // Extracts imported CSS files into external stylesheet        
-      new ExtractTextPlugin('[name].css'),
+  }
 
+  if (isDev) {
+    // config.plugins = config.plugins.concat([
+    //   // Eperimental. See: https://gist.github.com/sokra/27b24881210b56bbaff7
+    //   new LoaderOptionsPlugin({
+    //     debug: true,
+    //     options: {
+
+    //     }
+    //   })
+    // ]);
+  } else {
+    if (!isServer) {
+      config.plugins = config.plugins.concat([
+        // Extracts imported CSS files into external stylesheet        
+        new ExtractTextPlugin('[name].css'),
+      ]);
+    }
+
+    config.plugins = config.plugins.concat([
       // Description: Minimize all JavaScript output of chunks.
       // Loaders are switched into minimizing mode.
       // NOTE: To debug prod builds uncomment //debug lines and comment //prod lines
@@ -344,4 +369,4 @@ function makeWebpackConfig() {
   return config;
 }
 
-module.exports = makeWebpackConfig();
+module.exports = makeWebpackConfig(true);

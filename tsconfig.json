@@ -20,8 +20,7 @@
     "types": [
       "hammerjs",
       "jasmine",
-      "node",
-      "selenium-webdriver",
+      "node",      
       "source-map",
       "uglify-js",
       "webpack"
