@@ -97,7 +97,14 @@ function makeWebpackConfig() {
         use: [
           !isAot ? 'awesome-typescript-loader' : 'awesome-typescript-loader?{configFileName: "tsconfig.webpack.json"}',
           'angular2-template-loader',
-          'angular-router-loader?loader=system&genDir=compiled/src/app&aot=' + isAot
+          {
+            loader: 'ng-router-loader',
+            options: {
+              loader: 'async-system',
+              genDir: 'compiled',
+              aot: isAot
+            }
+          }
         ],
         exclude: [/\.(spec|e2e)\.ts$/]
       },
@@ -255,7 +262,15 @@ function makeWebpackConfig() {
     if (!isServer) {
       config.plugins = config.plugins.concat([
         // Extracts imported CSS files into external stylesheet        
-        new ExtractTextPlugin('[name].css')
+        new ExtractTextPlugin('[name].css'),
+
+        new CompressionPlugin({
+          asset: "[path].gz[query]",
+          algorithm: "gzip",
+          test: /\.js$/,
+          threshold: 10240,
+          minRatio: 0.8
+        })
       ]);
     }    
 
@@ -331,15 +346,7 @@ function makeWebpackConfig() {
           },
 
         }
-      }),
-
-      new CompressionPlugin({
-        asset: "[path].gz[query]",
-        algorithm: "gzip",
-        test: /\.js$/,
-        threshold: 10240,
-        minRatio: 0.8
-      })
+      })      
     ]);
   }
 
