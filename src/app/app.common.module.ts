@@ -8,13 +8,28 @@
  */
 
 import { NgModule } from '@angular/core';
-import { AppRoutingModule } from './app-routing.module';
+import { CommonModule } from '@angular/common';
+import { RouterModule, PreloadAllModules } from '@angular/router';
 import { AppComponent } from './app.component';
+import { ROUTES } from './app.routes';
+import { APP_RESOLVER_PROVIDERS } from './app.resolver';
+import { AppState, InternalStateType } from './app.service';
+import { HomeComponent } from './home';
+import { AboutComponent } from './about';
+import { NoContentComponent } from './no-content';
+import { XLargeDirective } from './home/x-large';
+
+type StoreType = {
+  state: InternalStateType,
+  restoreInputValues: () => void,
+  disposeOldHosts: () => void
+};
+
 
 const MODULES = [
-    // Do NOT include UniversalModule, HttpModule, or JsonpModule here
-
-    AppRoutingModule
+    // Do NOT include UniversalModule, HttpModule, or JsonpModule here  
+    CommonModule,  
+    RouterModule.forRoot(ROUTES, { useHash: true, preloadingStrategy: PreloadAllModules })
 ];
 
 const PIPES = [
@@ -23,10 +38,16 @@ const PIPES = [
 
 const COMPONENTS = [
     // put shared components here
-    AppComponent
+    AppComponent,
+    AboutComponent,
+    HomeComponent,
+    NoContentComponent,
+    XLargeDirective
 ];
 
 const PROVIDERS = [
+  ...APP_RESOLVER_PROVIDERS,
+  AppState
 ];
 
 @NgModule({

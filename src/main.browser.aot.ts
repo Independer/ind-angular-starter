@@ -1,5 +1,6 @@
 import { platformBrowser } from '@angular/platform-browser';
 import { enableProdMode } from '@angular/core';
+import { decorateModuleRef } from './app/environment.browser';
 import { AppBrowserModuleNgFactory } from '../compiled/src/app/app.browser.module.ngfactory';
 
 enableProdMode();
@@ -10,6 +11,7 @@ enableProdMode();
 export function main(): Promise<any> {
   return platformBrowser()
     .bootstrapModuleFactory(AppBrowserModuleNgFactory)    
+    .then(decorateModuleRef)
     .catch((err) => console.error(err));
 }
 

@@ -4,6 +4,7 @@ import { UniversalModule } from 'angular2-universal/browser';
 
 import { AppCommonModule } from './app.common.module';
 import { AppComponent } from './app.component';
+import { ENV_PROVIDERS } from './environment.browser';
 
 export function getRequest() {
   return {};
@@ -23,6 +24,7 @@ export function getResponse() {
         AppCommonModule
     ],
     providers: [
+      ENV_PROVIDERS
     ]
 })
 export class AppBrowserModule {
