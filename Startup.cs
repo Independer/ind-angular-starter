@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using CompressedStaticFiles;
 
 namespace IndependerStarter {
   public class Startup {
@@ -46,6 +47,10 @@ namespace IndependerStarter {
             defaults: new { controller = "Home", action = "Index" });
       });
 
+      // Server *.gz files when present
+      // See https://github.com/aspnet/StaticFiles/issues/7 and https://github.com/AnderssonPeter/CompressedStaticFiles
+      app.UseCompressedStaticFiles(); 
+      
       app.UseStaticFiles();
     }
   }

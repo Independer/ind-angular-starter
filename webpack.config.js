@@ -15,6 +15,7 @@ const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const V8LazyParseWebpackPlugin = require('v8-lazy-parse-webpack-plugin');
 const ngcWebpack = require('ngc-webpack');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 const env = process.env.ASPNETCORE_ENVIRONMENT || 'Development';
 const isServer = helpers.hasNpmFlag('server') || helpers.hasProcessFlag('SERVER_BUILD');
@@ -330,6 +331,14 @@ function makeWebpackConfig() {
           },
 
         }
+      }),
+
+      new CompressionPlugin({
+        asset: "[path].gz[query]",
+        algorithm: "gzip",
+        test: /\.js$/,
+        threshold: 10240,
+        minRatio: 0.8
       })
     ]);
   }
