@@ -7,7 +7,7 @@ import { enableProdMode } from '@angular/core';
  * App Module
  * our top level module that holds all of our components
  */
-import { AppModuleNgFactory } from '../compiled/src/app/app.module.ngfactory';
+import { AppBrowserModuleNgFactory } from '../compiled/src/app/app.browser.module.ngfactory';
 
 enableProdMode();
 
@@ -16,7 +16,7 @@ enableProdMode();
  */
 export function main(): Promise<any> {
   return platformBrowser()
-    .bootstrapModuleFactory(AppModuleNgFactory)    
+    .bootstrapModuleFactory(AppBrowserModuleNgFactory)    
     .catch((err) => console.error(err));
 }
 

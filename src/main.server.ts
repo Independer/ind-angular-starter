@@ -6,7 +6,7 @@ import 'zone.js';
 import { createServerRenderer, RenderResult } from 'aspnet-prerendering';
 import { enableProdMode } from '@angular/core';
 import { platformNodeDynamic } from 'angular2-universal';
-import { AppModule } from './app/app.module';
+import { AppServerModule } from './app/app.server.module';
 
 enableProdMode();
 const platform = platformNodeDynamic();
@@ -29,7 +29,7 @@ export default createServerRenderer(params => {
             }
         });
 
-        return requestZone.run<Promise<string>>(() => platform.serializeModule(AppModule)).then(html => {
+        return requestZone.run<Promise<string>>(() => platform.serializeModule(AppServerModule)).then(html => {
             resolve({ html: html });
         }, reject);
     });
