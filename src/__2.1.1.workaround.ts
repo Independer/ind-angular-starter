@@ -1,6 +1,7 @@
 ﻿
 /*
  * THIS IS TEMPORARY TO PATCH 2.1.1+ Core bugs
+ * See https://github.com/angular/universal/issues/606
  */
 
 /* tslint:disable */
