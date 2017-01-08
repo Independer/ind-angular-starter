@@ -16,6 +16,7 @@ const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const WebpackMd5Hash = require('webpack-md5-hash');
 const V8LazyParseWebpackPlugin = require('v8-lazy-parse-webpack-plugin');
 const ngcWebpack = require('ngc-webpack');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 const env = process.env.ASPNETCORE_ENVIRONMENT;
 const isDev = process.env.ASPNETCORE_ENVIRONMENT === 'Production' ? false : true;
@@ -297,6 +298,14 @@ function makeWebpackConfig() {
           },
 
         }
+      }),
+
+      new CompressionPlugin({
+        asset: "[path].gz[query]",
+        algorithm: "gzip",
+        test: /\.js$/,
+        threshold: 10240,
+        minRatio: 0.8
       })
     ]);
   }
