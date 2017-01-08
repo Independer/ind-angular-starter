@@ -17,14 +17,14 @@ const V8LazyParseWebpackPlugin = require('v8-lazy-parse-webpack-plugin');
 const ngcWebpack = require('ngc-webpack');
 
 const env = process.env.ASPNETCORE_ENVIRONMENT || 'Development';
-const isServer = process.argv.indexOf('--env.SERVER_BUILD') >= 0;
+const isServer = helpers.hasNpmFlag('server') || helpers.hasProcessFlag('SERVER_BUILD');
 const isDev = process.env.ASPNETCORE_ENVIRONMENT === 'Production' ? false : true;
 const isProd = !isDev;
-const isAot = helpers.hasNpmFlag('aot');
+const isAot = helpers.hasNpmFlag('aot') || helpers.hasProcessFlag('AOT');
 
 function makeWebpackConfig() {
 
-  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ ' + env + (isServer ? ' (SERVER)' : '') + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ ' + env + (isAot ? ' (AOT)' : '') + (isServer ? ' (SERVER)' : '') + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
   var config = {};
 
@@ -46,7 +46,7 @@ function makeWebpackConfig() {
   config.entry = {};
 
   if (isServer) {
-    config.entry['main-server'] = isAot ? './src/main.server.ts' : './src/main.server.ts';
+    config.entry['main-server'] = './src/main.server.ts';
   }
   else {
     config.entry['polyfills'] = './src/polyfills.browser.ts';
@@ -231,25 +231,32 @@ function makeWebpackConfig() {
         name: ['polyfills', 'vendor'].reverse()
       }),
     ]);
+  } 
+  else {
+    config.plugins = config.plugins.concat([
+      // Workaround for the  "Module not found: Error: Can't resolve 'vertx' in '<path>\node_modules\es6-promise\dist'" warning
+      // on server build. This appears to be not an issue and can be ignored (https://github.com/webpack/webpack/issues/353).
+      new IgnorePlugin(/vertx/)
+    ]);      
   }
-
+  
   if (isDev) {
-    // config.plugins = config.plugins.concat([
-    //   // Eperimental. See: https://gist.github.com/sokra/27b24881210b56bbaff7
-    //   new LoaderOptionsPlugin({
-    //     debug: true,
-    //     options: {
+    config.plugins = config.plugins.concat([
+      // Eperimental. See: https://gist.github.com/sokra/27b24881210b56bbaff7
+      new LoaderOptionsPlugin({
+        debug: true,
+        options: {
 
-    //     }
-    //   })
-    // ]);
+        }
+      })
+    ]);
   } else {
     if (!isServer) {
       config.plugins = config.plugins.concat([
         // Extracts imported CSS files into external stylesheet        
-        new ExtractTextPlugin('[name].css'),
+        new ExtractTextPlugin('[name].css')
       ]);
-    }
+    }    
 
     config.plugins = config.plugins.concat([
       // Description: Minimize all JavaScript output of chunks.

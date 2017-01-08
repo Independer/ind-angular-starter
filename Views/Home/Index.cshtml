@@ -1,29 +1,13 @@
-<style>
-    div.app-spinner {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-    }
-</style>
-
-<!--<app-root asp-prerender-webpack-config="webpack.config.js">
-  <div class="app-spinner">
-    <i class="fa fa-spinner fa-spin fa-5x" aria-hidden="true"></i>
-  </div>
-</app-root>-->
-
-<app asp-prerender-module="wwwroot/serverdist/main-server">
-    <div class="app-spinner">
-        <i class="fa fa-spinner fa-spin fa-5x" aria-hidden="true"></i>
-    </div>
-</app>
-
-<!--<app>
-    <div class="app-spinner">
-        <i class="fa fa-spinner fa-spin fa-5x" aria-hidden="true"></i>
-    </div>
-</app>-->
-
+<environment names="Staging,Production">
+    <app asp-prerender-module="wwwroot/serverdist/main-server">
+        <div class="app-spinner">
+            <i class="fa fa-spinner fa-spin fa-5x" aria-hidden="true"></i>
+        </div>
+    </app>
+</environment>
+<environment names="Development">
+    <app>Loading...</app>
+</environment>
 
 <script src="~/dist/polyfills.bundle.js" asp-append-version="true"></script>
 <script src="~/dist/main.bundle.js" asp-append-version="true"></script>

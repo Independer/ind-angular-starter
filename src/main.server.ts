@@ -1,5 +1,5 @@
-import 'reflect-metadata';
-import './__2.1.1.workaround.ts';
+import 'reflect-metadata'; // HAS TO BE THE FIRST IMPORT IN THIS FILE - Workaround for https://github.com/angular/angular/issues/13609
+import './__2.1.1.workaround'; // temporary until 2.1.1 things are patched in Core
 import 'angular2-universal-polyfills/node';
 import 'ts-helpers';
 import 'zone.js';
