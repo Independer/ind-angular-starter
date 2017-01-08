@@ -9,9 +9,9 @@ import '../styles/app.scss';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  public angularclassLogo = 'assets/img/angularclass-avatar.png';
+  public angularLogo = 'assets/img/angular-logo.png';
   public name = 'Angular 2 Webpack Starter';
-  public url = 'https://twitter.com/AngularClass';
+  public url = 'https://www.independer.nl';
 
   constructor(
     public appState: AppState
