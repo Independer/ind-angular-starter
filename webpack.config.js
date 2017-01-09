@@ -16,12 +16,14 @@ const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const V8LazyParseWebpackPlugin = require('v8-lazy-parse-webpack-plugin');
 const ngcWebpack = require('ngc-webpack');
 const CompressionPlugin = require('compression-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const env = process.env.ASPNETCORE_ENVIRONMENT || 'Development';
 const isServer = helpers.hasNpmFlag('server') || helpers.hasProcessFlag('SERVER_BUILD');
 const isDev = process.env.ASPNETCORE_ENVIRONMENT === 'Production' ? false : true;
 const isProd = !isDev;
 const isAot = helpers.hasNpmFlag('aot') || helpers.hasProcessFlag('AOT');
+const distPath = isServer ? 'serverdist' : 'dist';
 
 function makeWebpackConfig() {
 
@@ -55,16 +57,14 @@ function makeWebpackConfig() {
   }
 
   config.output = {
-    
+    path: helpers.root('wwwroot', distPath)
   };
 
   if (isServer) {
-    config.output.path = helpers.root('wwwroot', 'serverdist');
     config.output.filename = '[name].js';
     config.output.libraryTarget = 'commonjs';
   }
   else {
-    config.output.path = helpers.root('wwwroot', 'dist');
     config.output.filename = '[name].bundle.js';
     config.output.sourceMapFilename = '[file].map';
     config.output.chunkFilename = '[id].chunk.js';
@@ -167,6 +167,10 @@ function makeWebpackConfig() {
   };
 
   config.plugins = [   
+    new CleanWebpackPlugin([helpers.root('wwwroot', distPath), helpers.root('compiled')], {
+      verbose: true
+    }),
+
     // NOTE: when adding more properties make sure you include them in custom-typings.d.ts
     new DefinePlugin({
       'ENV': JSON.stringify(process.env.ASPNETCORE_ENVIRONMENT),
