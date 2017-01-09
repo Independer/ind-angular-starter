@@ -1,0 +1,28 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.DS_Store": true,
+        "**/node_modules": true,
+        "**/obj": true,
+        ".npmignore": true,
+        "*.xproj.user": true,
+        "Dockerfile": true,
+        ".vs": true,
+        "project.lock.json": true,
+        "AspNetCoreSpa.xproj": true,
+        "AspNetCoreSpa.sln": true,
+        "Properties": true,
+        ".awcache": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/coverage": true,
+        "**/compiled": true,
+        "**/wwwroot/dist": true,
+        "**/wwwroot/serverdist": true
+    },
+    "typescript.tsdk": "./node_modules/typescript/lib"
+}

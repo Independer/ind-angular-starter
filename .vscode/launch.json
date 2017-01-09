@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:5000",
+            "port": 9222,            
+            "webRoot": "${workspaceRoot}",            
+            "sourceMaps": true           
+        },
+        {
+            "name": "Attach",
+            "type": "chrome",
+            "request": "attach",
+            "url": "http://localhost:5000/*",
+            "port": 9222,            
+            "webRoot": "${workspaceRoot}",            
+            "sourceMaps": true
+        }
+    ]
+}

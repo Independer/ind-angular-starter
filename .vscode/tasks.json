@@ -1,0 +1,21 @@
+{
+    "version": "0.1.0",
+    "command": "dotnet",
+    "isShellCommand": true,
+    "args": [],
+    "tasks": [
+        {
+            "taskName": "run",
+            "args": [
+                "${workspaceRoot}\\project.json"
+            ],
+            "isBuildCommand": true,
+            "problemMatcher": "$msCompile"
+        }
+    ],
+    "options": {
+        "env": {
+            "ASPNETCORE_ENVIRONMENT": "Development"
+        }
+    }
+}
