@@ -1,2 +1,2 @@
 SET ASPNETCORE_ENVIRONMENT=Development
-dotnet run
+npm run build:browser
