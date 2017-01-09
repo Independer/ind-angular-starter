@@ -95,7 +95,7 @@ function makeWebpackConfig() {
       {
         test: /\.ts$/,
         use: [
-          !isAot ? 'awesome-typescript-loader' : 'awesome-typescript-loader?{configFileName: "tsconfig.webpack.json"}',
+          'awesome-typescript-loader?{configFileName: "tsconfig.webpack.json"}',
           'angular2-template-loader',
           {
             loader: 'ng-router-loader',
