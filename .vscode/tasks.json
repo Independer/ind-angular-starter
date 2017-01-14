@@ -7,9 +7,11 @@
         {
             "taskName": "run",
             "args": [
-                "${workspaceRoot}\\project.json"
+                "${workspaceRoot}\\project.json",
+                "-w"
             ],
             "isBuildCommand": true,
+            "isWatching": true,
             "problemMatcher": "$msCompile"
         }
     ],
