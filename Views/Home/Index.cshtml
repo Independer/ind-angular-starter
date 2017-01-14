@@ -1,13 +1,13 @@
-<environment names="Staging,Production">
-    <app asp-prerender-module="wwwroot/serverdist/main-server">
-        <div class="app-spinner">
-            <i class="fa fa-spinner fa-spin fa-5x" aria-hidden="true"></i>
-        </div>
-    </app>
-</environment>
-<environment names="Development">
-    <app>Loading...</app>
-</environment>
+@model IndependerStarter.Models.IndexViewModel
+
+@if (Model.IsServerRenderingEnabled) {
+  <app asp-prerender-module="@Model.ServerRenderingModulePath">
+    Loading...
+  </app>
+}
+else {
+  <app>Loading...</app>
+}
 
 <script src="~/dist/polyfills.bundle.js" asp-append-version="true"></script>
 <script src="~/dist/main.bundle.js" asp-append-version="true"></script>

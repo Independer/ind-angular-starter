@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using CompressedStaticFiles;
+using IndependerStarter.Configuration;
 
 namespace IndependerStarter {
   public class Startup {
@@ -14,6 +16,7 @@ namespace IndependerStarter {
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
       Configuration = builder.Build();
     }
@@ -26,6 +29,7 @@ namespace IndependerStarter {
       services.AddMvc();
       services.AddNodeServices();
 
+      services.Configure<ServerRenderingOptions>(Configuration.GetSection("ServerRendering"));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
