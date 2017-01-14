@@ -1,9 +1,6 @@
 import { platformBrowser } from '@angular/platform-browser';
-import { enableProdMode } from '@angular/core';
 import { decorateModuleRef } from './app/environment.browser';
 import { AppBrowserModuleNgFactory } from '../compiled/src/app/app.browser.module.ngfactory';
-
-enableProdMode();
 
 /*
  * Bootstrap our Angular app with a top level NgModule

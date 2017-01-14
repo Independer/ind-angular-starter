@@ -1,11 +1,6 @@
-// Angular 2
-import {
-  enableDebugTools,
-  disableDebugTools
-} from '@angular/platform-browser';
-import {
-  ApplicationRef
-} from '@angular/core';
+import { enableProdMode } from '@angular/core';
+import { enableDebugTools, disableDebugTools } from '@angular/platform-browser';
+import { ApplicationRef } from '@angular/core';
 // Environment Providers
 // tslint:disable-next-line:no-any
 let PROVIDERS: any[] = [
@@ -17,6 +12,7 @@ let PROVIDERS: any[] = [
 let decorateModuleRefFunc = <T>(value: T): T => { return value; };
 
 if ('Production' === ENV) {
+  enableProdMode();
 
   // Production
   // tslint:disable-next-line:no-any
@@ -31,7 +27,7 @@ if ('Production' === ENV) {
     // custom providers in production
   ];
 
-} 
+}
 else {
 
   // tslint:disable-next-line:no-any
@@ -40,10 +36,10 @@ else {
     const cmpRef = appRef.components[0];
 
     // tslint:disable-next-line:no-any
-    const w = (<any> window);
+    const w = (<any>window);
 
     let ng = w.ng;
-    enableDebugTools(cmpRef);    
+    enableDebugTools(cmpRef);
     w.ng.probe = ng.probe;
     w.ng.coreTokens = ng.coreTokens;
     return modRef;

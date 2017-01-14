@@ -14,17 +14,17 @@ export function getResponse() {
 }
 
 @NgModule({
-    bootstrap: [AppComponent],
-    imports: [
-        // "UniversalModule" Must be first import.
-        // ** NOTE ** : This automatically imports BrowserModule, HttpModule, and JsonpModule for Browser,
-        // and NodeModule, NodeHttpModule etc for the server.
-        UniversalModule, 
+  bootstrap: [AppComponent],
+  imports: [
+    // "UniversalModule" Must be first import.
+    // ** NOTE ** : This automatically imports BrowserModule, HttpModule, and JsonpModule for Browser,
+    // and NodeModule, NodeHttpModule etc for the server.
+    UniversalModule,
 
-        AppCommonModule
-    ],
-    providers: [
-    ]
+    AppCommonModule
+  ],
+  providers: [
+  ]
 })
 export class AppServerModule {
 }

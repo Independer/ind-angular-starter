@@ -1,4 +1,3 @@
-import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppBrowserModule } from './app/app.browser.module';
 import { decorateModuleRef } from './app/environment.browser';
@@ -10,22 +9,19 @@ const platform = platformBrowserDynamic();
 const hotModule = module.hot;
 
 if (hotModule) {
-    hotModule.accept();
-    hotModule.dispose(() => { platform.destroy(); });
-} 
-else {
-    enableProdMode();
+  hotModule.accept();
+  hotModule.dispose(() => { platform.destroy(); });
 }
 
 const bootApplication = () => {
-    return platform.bootstrapModule(AppBrowserModule)
-        .then(decorateModuleRef)
-        .catch(err => console.error(err));
+  return platform.bootstrapModule(AppBrowserModule)
+    .then(decorateModuleRef)
+    .catch(err => console.error(err));
 };
 
 if (document.readyState === 'complete') {
-    bootApplication();
-} 
+  bootApplication();
+}
 else {
-    document.addEventListener('DOMContentLoaded', bootApplication);
+  document.addEventListener('DOMContentLoaded', bootApplication);
 }

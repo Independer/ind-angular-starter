@@ -20,22 +20,22 @@ import { NoContentComponent } from './no-content';
 import { XLargeDirective } from './home/x-large';
 
 const MODULES = [
-    // Do NOT include UniversalModule, HttpModule, or JsonpModule here  
-    CommonModule,
-    RouterModule.forRoot(ROUTES, { preloadingStrategy: PreloadAllModules })
+  // Do NOT include UniversalModule, HttpModule, or JsonpModule here  
+  CommonModule,
+  RouterModule.forRoot(ROUTES, { preloadingStrategy: PreloadAllModules })
 ];
 
 const PIPES = [
-    // put pipes here
+  // put pipes here
 ];
 
 const COMPONENTS = [
-    // put shared components here
-    AppComponent,
-    AboutComponent,
-    HomeComponent,
-    NoContentComponent,
-    XLargeDirective
+  // put shared components here
+  AppComponent,
+  AboutComponent,
+  HomeComponent,
+  NoContentComponent,
+  XLargeDirective
 ];
 
 const PROVIDERS = [
@@ -56,4 +56,4 @@ const PROVIDERS = [
     ...PROVIDERS
   ]
 })
-export class AppCommonModule {}
+export class AppCommonModule { }
