@@ -49,7 +49,7 @@ function makeWebpackConfig() {
   if (isServer) {
     config.devtool = 'inline-source-map';
   } else if (isDev) {
-    config.devtool = 'cheap-module-source-map';
+    config.devtool = 'eval-source-map';
   } else {
     config.devtool = 'source-map';
   }
