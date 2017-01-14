@@ -2,11 +2,17 @@
   "name": "independer-starter",
   "version": "1.0.0",
   "scripts": {
-    "build": "npm run build:server && npm run build:browser",
-    "build:aot": "npm run build:server && npm run build:browser:aot",
+    "build:dev": "npm run build:browser:dev",
+    "build:prod": "npm run build:server:prod && npm run build:browser:aot:prod",
     "build:browser": "webpack --config webpack.config.js  --progress --profile --bail",
+    "build:browser:dev": "npm run env:dev npm run build:browser",
+    "build:browser:prod": "npm run env:prod npm run build:browser",
     "build:browser:aot": "webpack --config webpack.config.js  --progress --profile --bail --env.AOT && npm run clean:aot",
+    "build:browser:aot:dev": "npm run env:dev npm run build:browser:aot",
+    "build:browser:aot:prod": "npm run env:prod npm run build:browser:aot",
     "build:server": "webpack --config webpack.config.js  --progress --profile --bail --env.SERVER_BUILD",
+    "build:server:dev": "npm run env:dev npm run build:server",
+    "build:server:prod": "npm run env:prod npm run build:server",
     "clean:aot": "npm run rimraf -- compiled",
     "clean:dist": "npm run rimraf -- wwwroot/dist",
     "clean:serverdist": "npm run rimraf -- wwwroot/serverdist",
@@ -33,7 +39,9 @@
     "protractor": "protractor",
     "protractor:delay": "sleep 3 && npm run protractor",
     "protractor:live": "protractor --elementExplorer",
-    "e2e": "npm-run-all -p -r server protractor"
+    "e2e:dev": "npm run clean && npm-run-all -p -r server:dev protractor:delay",
+    "e2e:prod": "npm run clean && npm run build:prod && npm-run-all -p -r server:prod protractor",
+    "ci": "npm run clean && npm run build:dev && npm run e2e:dev && npm run e2e:prod && npm run clean"
   },
   "dependencies": {
     "@angular/common": "~2.4.3",
