@@ -38,7 +38,9 @@ const tsLintOptions = {
 
 function makeWebpackConfig() {
 
-  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ ' + env + (isAot ? ' (AOT)' : '') + (isServer ? ' (SERVER)' : '') + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+  console.log((isServer ? 'SERVER' : 'BROWSER') + ' | ' + env.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT'));
+  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
   var config = {};
 
@@ -185,7 +187,7 @@ function makeWebpackConfig() {
 
   config.plugins = [   
     new CleanWebpackPlugin([helpers.root('wwwroot', distPath), helpers.root('compiled')], {
-      verbose: true
+      verbose: false
     }),
 
     // NOTE: when adding more properties make sure you include them in custom-typings.d.ts
