@@ -25,7 +25,8 @@ const MODULES = [
   RouterModule.forRoot(ROUTES, { preloadingStrategy: PreloadAllModules })
 ];
 
-const PIPES = [
+// tslint:disable-next-line:no-any
+const PIPES: any[] = [
   // put pipes here
 ];
 
