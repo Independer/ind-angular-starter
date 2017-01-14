@@ -25,6 +25,17 @@ const isProd = !isDev;
 const isAot = helpers.hasNpmFlag('aot') || helpers.hasProcessFlag('AOT');
 const distPath = isServer ? 'serverdist' : 'dist';
 
+const tsLintOptions = {
+  // tslint errors are displayed by default as warnings 
+  // set emitErrors to true to display them as errors 
+  emitErrors: true,
+
+  // tslint does not interrupt the compilation by default 
+  // if you want any file with tslint errors to fail 
+  // set failOnHint to true 
+  failOnHint: false
+};
+
 function makeWebpackConfig() {
 
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ ' + env + (isAot ? ' (AOT)' : '') + (isServer ? ' (SERVER)' : '') + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
@@ -89,6 +100,12 @@ function makeWebpackConfig() {
   config.module = {
 
     rules: [
+      {
+        enforce: 'pre',
+        test: /\.ts$/,
+        loader: 'tslint-loader',
+        exclude: /(node_modules)/,
+      },
 
       // Typescript loader support for .ts and Angular 2 async routes via .async.ts
       // Replace templateUrl and stylesUrl with require()
@@ -194,7 +211,11 @@ function makeWebpackConfig() {
     ),
 
     // Experimental. See: https://gist.github.com/sokra/27b24881210b56bbaff7
-    new LoaderOptionsPlugin({}),
+    new LoaderOptionsPlugin({
+      options: {
+        tslint: tsLintOptions
+      }
+    }),
 
     // Fix Angular 2
     new NormalModuleReplacementPlugin(
@@ -258,7 +279,7 @@ function makeWebpackConfig() {
       new LoaderOptionsPlugin({
         debug: true,
         options: {
-
+          tslint: tsLintOptions
         }
       })
     ]);
@@ -336,6 +357,7 @@ function makeWebpackConfig() {
         minimize: true,
         debug: false,
         options: {
+          tslint: tsLintOptions,
           // TODO: Need to workaround Angular 2's html syntax => #id [bind] (event) *ngFor
           htmlLoader: {
             minimize: true,

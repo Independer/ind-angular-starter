@@ -13,23 +13,16 @@ import { RouterModule, PreloadAllModules } from '@angular/router';
 import { AppComponent } from './app.component';
 import { ROUTES } from './app.routes';
 import { APP_RESOLVER_PROVIDERS } from './app.resolver';
-import { AppState, InternalStateType } from './app.service';
+import { AppState } from './app.service';
 import { HomeComponent } from './home';
 import { AboutComponent } from './about';
 import { NoContentComponent } from './no-content';
 import { XLargeDirective } from './home/x-large';
 
-type StoreType = {
-  state: InternalStateType,
-  restoreInputValues: () => void,
-  disposeOldHosts: () => void
-};
-
-
 const MODULES = [
     // Do NOT include UniversalModule, HttpModule, or JsonpModule here  
-    CommonModule,  
-    RouterModule.forRoot(ROUTES, { useHash: true, preloadingStrategy: PreloadAllModules })
+    CommonModule,
+    RouterModule.forRoot(ROUTES, { preloadingStrategy: PreloadAllModules })
 ];
 
 const PIPES = [

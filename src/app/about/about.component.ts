@@ -5,11 +5,13 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'about',
   templateUrl: './about.component.html'
 })
 export class AboutComponent implements OnInit {
 
+  // tslint:disable-next-line:no-any
   public localState: any;
   constructor(
     public route: ActivatedRoute
@@ -18,6 +20,7 @@ export class AboutComponent implements OnInit {
   public ngOnInit() {
     this.route
       .data
+      // tslint:disable-next-line:no-any
       .subscribe((data: any) => {
         // your resolved data from route
         this.localState = data.yourData;
@@ -37,7 +40,7 @@ export class AboutComponent implements OnInit {
     setTimeout(() => {
 
       System.import('./mock-data.json')
-        .then((json) => {
+        .then(json => {
           console.log('async mockData', json);
           this.localState = json;
         });

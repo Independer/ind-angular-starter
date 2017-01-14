@@ -24,5 +24,6 @@
         "**/wwwroot/dist": true,
         "**/wwwroot/serverdist": true
     },
-    "typescript.tsdk": "./node_modules/typescript/lib"
+    "typescript.tsdk": "./node_modules/typescript/lib",
+    "tslint.autoFixOnSave": true
 }

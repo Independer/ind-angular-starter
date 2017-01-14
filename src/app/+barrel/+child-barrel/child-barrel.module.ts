@@ -11,13 +11,13 @@ console.log('`ChildBarrel` bundle loaded asynchronously');
 @NgModule({
   declarations: [
     // Components / Directives/ Pipes
-    ChildBarrelComponent,
+    ChildBarrelComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule.forChild(routes),
-  ],
+    RouterModule.forChild(routes)
+  ]
 })
 export class ChildBarrelModule {
   public static routes = routes;

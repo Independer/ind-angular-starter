@@ -1,6 +1,6 @@
 import {
   Component,
-  OnInit,
+  OnInit
 } from '@angular/core';
 /*
  * We're loading this component asynchronously
@@ -11,8 +11,9 @@ import {
 console.log('`ChildDetail` component loaded asynchronously');
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'child-detail',
-  templateUrl: './child-detail.component.html',
+  templateUrl: './child-detail.component.html'
 })
 export class ChildDetailComponent implements OnInit {
 

@@ -7,50 +7,57 @@ import {
   ApplicationRef
 } from '@angular/core';
 // Environment Providers
+// tslint:disable-next-line:no-any
 let PROVIDERS: any[] = [
   // common env directives
 ];
 
 // Angular debug tools in the dev console
 // https://github.com/angular/angular/blob/86405345b781a9dc2438c0fbe3e9409245647019/TOOLS_JS.md
-let _decorateModuleRef = <T>(value: T): T => { return value; };
+let decorateModuleRefFunc = <T>(value: T): T => { return value; };
 
-if ('Production' === ENV) {  
+if ('Production' === ENV) {
 
   // Production
-  _decorateModuleRef = (modRef: any) => {
+  // tslint:disable-next-line:no-any
+  decorateModuleRefFunc = (modRef: any) => {
     disableDebugTools();
 
     return modRef;
   };
 
   PROVIDERS = [
-    ...PROVIDERS,
+    ...PROVIDERS
     // custom providers in production
   ];
 
-} else {
+} 
+else {
 
-  _decorateModuleRef = (modRef: any) => {
+  // tslint:disable-next-line:no-any
+  decorateModuleRefFunc = (modRef: any) => {
     const appRef = modRef.injector.get(ApplicationRef);
     const cmpRef = appRef.components[0];
 
-    let _ng = (<any> window).ng;
-    enableDebugTools(cmpRef);
-    (<any> window).ng.probe = _ng.probe;
-    (<any> window).ng.coreTokens = _ng.coreTokens;
+    // tslint:disable-next-line:no-any
+    const w = (<any> window);
+
+    let ng = w.ng;
+    enableDebugTools(cmpRef);    
+    w.ng.probe = ng.probe;
+    w.ng.coreTokens = ng.coreTokens;
     return modRef;
   };
 
   // Development
   PROVIDERS = [
-    ...PROVIDERS,
+    ...PROVIDERS
     // custom providers in development
   ];
 
 }
 
-export const decorateModuleRef = _decorateModuleRef;
+export const decorateModuleRef = decorateModuleRefFunc;
 
 export const ENV_PROVIDERS = [
   ...PROVIDERS

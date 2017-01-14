@@ -11,6 +11,7 @@ import { AppServerModule } from './app/app.server.module';
 enableProdMode();
 const platform = platformNodeDynamic();
 
+// tslint:disable-next-line:no-default-export
 export default createServerRenderer(params => {
     return new Promise<RenderResult>((resolve, reject) => {
         const requestZone = Zone.current.fork({

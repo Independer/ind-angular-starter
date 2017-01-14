@@ -35,11 +35,13 @@ import 'ts-helpers';
 if ('production' === ENV) {
   // Production
 
-} else {
+} 
+else {
 
   // Development
   Error.stackTraceLimit = Infinity;
 
+  /* tslint:disable no-require-imports */
   /* tslint:disable no-var-requires */
   require('zone.js/dist/long-stack-trace-zone');
 

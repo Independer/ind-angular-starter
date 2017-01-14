@@ -6,10 +6,16 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "noUnusedLocals": true,    
     "sourceMap": true,
     "noEmit": true,
     "noEmitHelpers": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
+    "noImplicitAny": true,    
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
     "lib": [
       "es2015",
       "dom"

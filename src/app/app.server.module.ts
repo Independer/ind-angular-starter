@@ -14,7 +14,7 @@ export function getResponse() {
 }
 
 @NgModule({
-    bootstrap: [ AppComponent ],
+    bootstrap: [AppComponent],
     imports: [
         // "UniversalModule" Must be first import.
         // ** NOTE ** : This automatically imports BrowserModule, HttpModule, and JsonpModule for Browser,

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 
 @Injectable()
+// tslint:disable-next-line:no-any
 export class DataResolver implements Resolve<any> {
   public resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     return Observable.of({ res: 'I am data'});

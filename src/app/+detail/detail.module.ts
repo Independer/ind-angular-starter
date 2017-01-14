@@ -11,13 +11,13 @@ console.log('`Detail` bundle loaded asynchronously');
 @NgModule({
   declarations: [
     // Components / Directives/ Pipes
-    DetailComponent,
+    DetailComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule.forChild(routes),
-  ],
+    RouterModule.forChild(routes)
+  ]
 })
 export class DetailModule {
   public static routes = routes;

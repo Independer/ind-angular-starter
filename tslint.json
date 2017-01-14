@@ -1,58 +1,571 @@
 {
-  "extends": [
-    "tslint:recommended"
-  ],
-  "rulesDirectory": [
-    "node_modules/codelyzer"
-  ],
+  "rulesDirectory": ["node_modules/codelyzer", "node_modules/tslint-eslint-rules/dist/rules"],
   "rules": {
-    // Custom
-    "trailing-comma": [false, {"multiline": "always", "singleline": "never"}],
-    "interface-name": [false, "always-prefix"],
-    // Angular 2
-    "component-class-suffix": true,
-    // "component-selector": [true, "element", "my", "kebab-case"],
-    "directive-class-suffix": true,
-    // "directive-selector": [true, "attribute", "my", "camelCase"],
-    "import-destructuring-spacing": true,
-    "invoke-injectable": true,
-    "no-access-missing-member": true,
-    "no-attribute-parameter-decorator": true,
-    "no-forward-ref": true,
-    "no-input-rename": true,
-    "no-output-rename": true,
-    "pipe-naming": [true, "camelCase", "my"],
-    "templates-use-public": true,
-    "use-host-property-decorator": true,
-    "use-input-property-decorator": true,
-    "use-life-cycle-interface": true,
-    "use-output-property-decorator": true,
-    "use-pipe-transform-interface": true,
-    // General
-    "no-console": [true,
-      "time",
-      "timeEnd",
-      "trace"
+    /**
+     * PascalCasing should be enforced for classes and interfaces.
+     */
+    "class-name": true,
+
+    /**
+     * We should use spaces for whitespace consistently. No tabs allowed.
+     */
+    "indent": [true, "spaces"],
+
+    /**
+     * The opening curly brace of e.g. an if is on the same line as the if's closing parenthesis.
+     * Also ensure that there is whitespace between the ) and {.
+     */
+    "one-line": [true,
+      "check-open-brace",
+      "check-whitespace"
     ],
-    "max-line-length": [
-      true,
-      100
-    ],
-    "no-string-literal": false,
+
+    /**
+     * Disallow the usage of var, because let and const are clearer in usage.
+     */
+    "no-var-keyword": true,
+
+    /**
+     * Disallow redeclaring a variable within the same block scope more than once.
+     * Note that this is only useful as long as we don't have no-var-keyword set to true.
+     */
+    "no-duplicate-variable": true,
+
+    /**
+     * Disallow usage of variables before their declaration.
+     * Note that this is only useful as long as we don't have no-var-keyword set to true.
+     */
     "no-use-before-declare": true,
-    "object-literal-sort-keys": false,
-    "ordered-imports": false,
-    "quotemark": [
-      true,
-      "single",
-      "avoid-escape"
-    ],
+
+    /**
+     * Require single quotation marks for strings, unless using double quotation marks
+     * avoid the need for escaping (e.g. "Hello 'World'" would be allowed).
+     */
+    "quotemark": [true, "single", "avoid-escape"],
+
+    /**
+     * Always enforce the use of semicolon after a statement.
+     */
+    "semicolon": [true, "always"],
+
+    /**
+     * Check variable name formatting to be camelCased or UPPER_CASED, ban keyword variable names.
+     */ 
     "variable-name": [
-      true,
-      "allow-leading-underscore",
-      "allow-pascal-case",
-      "ban-keywords",
-      "check-format"
-    ]
+      true, "check-format", "ban-keywords"
+    ],
+
+    /**
+     * Always require whitespace after if/else/for/while, var declarations, 
+     * around operators, after separator tokens (,/;) and before variable type specifications.
+     * Do not require whitespace after a typecast (as per Microsoft TypeScript convention).
+     */
+    "whitespace": [true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-module",
+      "check-separator",
+      "check-type"
+    ],
+
+    /**
+     * We won't very often specify typedefs, but if we do, just follow Microsoft's standard.
+     */
+    "typedef-whitespace": [true, {
+      "call-signature": "nospace",
+      "index-signature": "nospace",
+      "parameter": "nospace",
+      "property-declaration": "nospace",
+      "variable-declaration": "nospace"
+    }],
+
+    /**
+     * We shouldn't use the internal module system.
+     */
+    "no-internal-module": true,
+
+    /**
+     * When a variable is initialized to a number, string or boolean, there's no need
+     * to specify the type, because it's already clear based on the literal.
+     */
+    "no-inferrable-types": [true],
+
+    /**
+     * Disallow the usage of null, to remove the dual concept of null and undefined.
+     */
+    "no-null-keyword": true,
+
+    /**
+     * Requires === and !== in place of == and !=, except when comparing to null or undefined.
+     */
+    "triple-equals": [
+      true, "allow-null-check", "allow-undefined-check"
+    ],
+
+    /**
+     * Whenever a variable isn't modified. It needs to be declared as a const instead of let.
+     */
+    // Disabled because it throws an exception "Cannot read property 'Export' of undefined' while validating". 
+    // "prefer-const": true,
+
+    /**
+     * Disallow empty interfaces, because they're useless.
+     */
+    "no-empty-interface": true,
+
+    /**
+     * Maintain ordering within classes. Fields-first setting has the following order:
+     *  public-static-field
+     *  protected-static-field
+     *  private-static-field
+     *  public-instance-field
+     *  protected-instance-field
+     *  private-instance-field
+     *  constructor
+     *  public-static-method
+     *  protected-static-method
+     *  private-static-method
+     *  public-instance-method
+     *  protected-instance-method
+     *  private-instance-method
+     */
+    "member-ordering": [true, { "order": "fields-first" }],
+
+    /**
+     * Don't use any, because it removes the compile-time benefits of TypeScript.
+     */
+    "no-any": true,
+
+    /**
+     * Disallows the use constant number values outside of variable assignments.
+     * Exceptions are -1, 0, 1 and 10, because they are commonly used in loops, etc.
+     * 10 is used for parseInt's radix parameter.
+     */
+    "no-magic-numbers": [true, -1, 0, 1, 10],
+
+    /**
+     * /// <reference path=> is very old, so don't use it.
+     */
+    "no-reference": true,
+
+    /**
+     * We will not use this style of importing, so don't allow it.
+     */
+    "no-var-requires": true,
+
+    /**
+     * Only allow arrow functions, because they fix problems with using this.
+     */
+    "only-arrow-functions": [
+      true, "allow-declarations"
+    ],
+
+    /**
+     * If the index is not used for anything but access to the array element, then prefer for..of,
+     * because it's easier to implement and read.
+     */
+    "prefer-for-of": true,
+
+    //This rule is interesting, maybe we should also have it for NG2?
+    //promise-function-async
+
+    /**
+     * Enforce braces for if/for/do/while.
+     */
+    "curly": true,
+
+    /**
+     * Require for...in statement to be filtered with an if hasOwnProperty statement.
+     */
+    "forin": true,
+
+    /**
+     * Ensure labels are only used at sensible locations, such as do/for/while/switch statements.
+     */
+    "label-position": true,
+
+    /**
+     * Disallow usage of arguments.callee, because it makes various performance optimizations impossible.
+     */
+    "no-arg": true,
+
+    /**
+     * Disallow bit-wise operators other than (& and | for intersection and union types).
+     * Often, these are errors, where e.g. someone intended to write boolean && boolean instead of boolean & boolean.
+     * If the usage is intended, the error can be overriden at the file level.
+     */
+    "no-bitwise": true,
+    
+    /**
+     * Disallow the usage of assignments within the conditional part of do-while, for, if and while statements.
+     * These are usually errors, e.g. if (var1 = var2) is probably intended as if (var1 === var2).
+     */
+    "no-conditional-assignment": true,
+
+    /**
+     * Disallow usage of the constructors of String, Number and Boolean. These wrap the supplied object,
+     * which is probably never intended.
+     */
+    "no-construct": true,
+
+    /**
+     * While the debugger statement is appropriate for triggering a debug point, it should never stay in production
+     * code, so we definitely want a warning on it.
+     */
+    "no-debugger": true,
+
+    /**
+     * Disallow empty blocks, because these often indicate missing code. Note that sometimes an empty block might
+     * be intentional. However, this rule considers an empty block with a comment inside of it non-empty.
+     * It's acceptable when a comment describes why the block is empty.
+     */
+    "no-empty": true,
+
+    /**
+     * eval is evil.
+     */
+    "no-eval": true,
+
+    /**
+     * Disallow using for...in on array types.
+     * 
+     * We'd like this rule to be on, however, for this type checking needs to be enabled and that's not an option within
+     * the editors right now. https://github.com/Microsoft/vscode-tslint/issues/70
+     */
+    //"no-for-in-array": true
+
+    /**
+     * Disallow shadowed variables, because it's more complex to understand.
+     */
+    "no-shadowed-variable": true,
+
+    /**
+     * Require access to an object properties using:
+     *  o.property
+     * Disallow usage of:
+     *  o['property']
+     * Unless the property name contains characters which are not valid for strongly-typed property access.
+     */
+    "no-string-literal": true,
+
+    /**
+     * Disallow throwing of plain strings, because only Errors produce proper stack traces.
+     */
+    "no-string-throw": true,
+
+    /**
+     * Disallow fall-through of switch case statements that contain statements.
+     * E.g. this is disallowed:
+     *  switch(foo) {
+     *    case 1:
+     *      someFunc(foo);
+     *    case 2:
+     *      someOtherFunc(foo);
+     *  }
+     */
+    "no-switch-case-fall-through": true,
+
+    /**
+     * Disallow control flow statements such as return, continue, break and throw within a finally block.
+     */
+    "no-unsafe-finally": true,
+
+    /**
+     * Disallows unused expression statements.
+     * Unused expressions are expression statements which are not assignments or function calls (and thus usually no-ops).
+     */
+    "no-unused-expression": true,
+
+    /**
+     * Disallow new-ing an object, without using that object later, because this indicates the constructor
+     * is invoked solely for its side effects.
+     */
+    "no-unused-new": true,
+
+    /**
+     * Requires expressions of type void to appear in statement position.
+     * 
+     * We'd like this rule to be on, however, for this type checking needs to be enabled and that's not an option within
+     * the editors right now. https://github.com/Microsoft/vscode-tslint/issues/70
+     */
+    //"no-void-expression": true
+
+    /**
+     * Enforce parseInt to be called with the radix parameter.
+     * Always specify this parameter to eliminate reader confusion and to guarantee predictable behavior. 
+     * Different implementations produce different results when a radix is not specified, usually defaulting the value to 10.
+     */
+    "radix": true,
+
+    /**
+     * When adding two variables, operands must both be of type number or of type string.
+     * 
+     * We'd like this rule to be on, however, for this type checking needs to be enabled and that's not an option within
+     * the editors right now. https://github.com/Microsoft/vscode-tslint/issues/70
+     */
+    //"restrict-plus-operands": true,
+
+    /**
+     * Usage of && or || operators should be with boolean operands and expressions 
+     * in if, do, while and for statements should be of type boolean.
+     * 
+     * We'd like this rule to be on, however, for this type checking needs to be enabled and that's not an option within
+     * the editors right now. https://github.com/Microsoft/vscode-tslint/issues/70
+     */
+    //"strict-boolean-expressions": true,
+
+    /**
+     * Enforces use of the isNaN() function to check for NaN references instead of a comparison to the NaN constant.
+     * Since NaN !== NaN, comparisons with regular operators will produce unexpected results. 
+     * So, instead of if (myVar === NaN), do if (isNaN(myVar)).
+     */
+    "use-isnan": true,
+
+    /**
+     * Disallows mergeable namespaces in the same file.
+     */
+    "no-mergeable-namespace": true,
+
+    /**
+     * Disallow invocation of require(). Prefer the newer ES6-style imports.
+     */
+    "no-require-imports": true,
+
+    /**
+     * Disallows trailing commas in array and object literals, 
+     * destructuring assignments, function and tuple typings, named imports and function parameters.
+     */
+    "trailing-comma": [
+      true, {
+        "multiline": "never", 
+        "singleline": "never"
+      }
+    ],
+
+    /**
+     * Disallows default exports in ES6-style modules. Use named exports instead.
+     * Named imports/exports promote clarity. In addition, current tooling differs 
+     * on the correct way to handle default imports/exports. 
+     * Avoiding them all together can help avoid tooling bugs and conflicts.
+     */
+    "no-default-export": true,
+    
+    /**
+     * Enforces vertical alignment on parameters and statements, but not on arguments, because those
+     * get annoying pretty quick with .then(function() {}, secondArgument) across multiple lines.
+     */
+    "align": [
+      true, "parameters", "statements"
+    ],
+
+    /**
+     * Enforce usage of T[] instead of Array<T> for arrays.
+     */
+    "array-type": [
+      true, "array"
+    ],
+
+    /**
+     * Requires parentheses around the parameters of arrow function definitions.
+     * Unless it's not required by TypeScript (single arg without type). As per guideline:
+     * https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines
+     */
+    "ter-arrow-parens": [true, "as-needed"],
+
+    /**
+     * An interface or literal type with just a call signature can be written as a function type.
+     * Disabled, because I don't yet understand it :-).
+     */
+    //"callable-types": true,
+
+    /**
+     * Disallow prefixing of interface names with I, as per:
+     * https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines
+     * 
+     * It makes sense, because within TypeScript, interfaces themselves 
+     * can also be used as an instantiated type.
+     */
+    "interface-name": [
+      true, "never-prefix"
+    ],
+
+    /**
+     * Prefer an interface declaration over a type literal (type T = { ... }).
+     * I'm not sure yet. The difference is that editors will display the original type
+     * (RHS) when using a type literal, and the interface declaration type when using an interface.
+     * To me it seems that showing the actual type behind the name is useful.
+     */
+    //"interface-over-type-literal": true,
+
+    /**
+     * Require usage of parentheses when invoking a constructor via the new keyword.
+     */
+    "new-parens": true,
+
+    /**
+     * Turned off, because we need the opposite, to enforce using <Type> instead of as Type. But they don't have it!
+     */
+    "no-angle-bracket-type-assertion": false,
+
+    /**
+     * Disallows multiple variable definitions in the same declaration statement, except for within for loop declaration.
+     */
+    "one-variable-per-declaration": [
+      true, "ignore-for-loop"
+    ],
+
+    /**
+     * ESLint:
+     * Disallow use of constant expressions (such as true) in conditions.
+     */
+    "no-constant-condition": true,
+
+    /**
+     * ESLint:
+     * Disallow usage of invisible control characters in regular expressions.
+     */
+     "no-control-regex": true,
+
+     /**
+      * ESLint:
+      * Disallow empty character classes in regular expressions.
+      */
+     "no-empty-character-class": true,
+
+     /**
+      * ESLint:
+      * Disallow a duplicate case labels.
+      */
+     "no-duplicate-case": true,
+
+     /**
+      * ESLint:
+      * Disallow assigning to the exception in a catch block.
+      */
+     "no-ex-assign": true,
+
+     /**
+      * ESLint:
+      * Disallow double-negation boolean casts in a boolean context.
+      */
+     "no-extra-boolean-cast": true,
+
+     /**
+      * ESLint:
+      * Disallow unnecessary semicolons.
+      */
+     "no-extra-semi": true,
+
+     /**
+      * ESLint:
+      * Disallow function declarations in nested blocks.
+      */
+     "no-inner-declarations": [
+       true,
+       "functions"
+     ],
+
+     /**
+      * ESLint:
+      * Disallow invalid regular expression strings in the RegExp constructor
+      */
+     "no-invalid-regexp": true,
+
+     /**
+      * ESLint:
+      * Disallow irregular whitespace outside of strings and comments. Irregular means things like:
+      * \u205f - Medium Mathematical Space
+      */
+     "no-irregular-whitespace": true,
+
+     /**
+      * ESLint:
+      * Disallow multiple spaces in a regular expression literal
+      */
+     "no-regex-spaces": true,
+
+     /**
+      * ESLint:
+      * Disallow multiple spaces in a regular expression literal. Example:
+      * [,,3,,] is disallowed by this rule.
+      */
+     "no-sparse-arrays": true,
+
+     /**
+      * ESLint:
+      * Avoid code that looks like two expressions but is actually one.
+      */
+     "no-unexpected-multiline": true,
+
+     /**
+      * ESLint:
+      * Ensure that the results of typeof are compared against a valid string.
+      */
+     "valid-typeof": true,
+
+     /**
+      * ESLint:
+      * Disallow use of multiple spaces.
+      */
+     "no-multi-spaces": [true],
+
+     /**
+      * ESLint:
+      * Enforce spacing inside array brackets. Never allow spacing before/after elements. 
+      * The following is not allowed: [ 'abc']
+      */
+     "array-bracket-spacing": [
+       true, 
+       "never"
+     ],
+
+     /**
+      * ESLint:
+      * Enforces consistent spacing inside single-line blocks.
+      */
+     "block-spacing": [
+       true,
+       "always"
+     ],
+
+     /**
+      * ESLint:
+      * Enforce the stroustrup brace style, in which the else statements in an if-else construct, 
+      * as well as catch and finally, must be on its own line after the preceding closing brace.
+      */
+     "brace-style": [
+       true,
+       "stroustrup", {
+         "allowSingleLine": true
+       }
+     ],
+
+     /**
+      * ESLint:
+      * Require space before/after arrow function's arrow.
+      */
+     "ter-arrow-spacing": [true],
+
+     /**
+      * Below are all the codelyzer linting rules.
+      */
+     "directive-selector": [true, "attribute", ["ind"], "camelCase"],
+     "component-selector": [true, "element", ["ind"], "kebab-case"],
+     "use-input-property-decorator": true,
+     "use-output-property-decorator": true,
+     "use-host-property-decorator": true,
+     "no-attribute-parameter-decorator": true,
+     "no-input-rename": true,
+     "no-output-rename": true,
+     "no-forward-ref": true,
+     "use-life-cycle-interface": true,
+     "use-pipe-transform-interface": true,
+     "component-class-suffix": [true, "Component"],
+     "directive-class-suffix": [true, "Directive"],
+     "import-destructuring-spacing": true,
+     "templates-use-public": true,
+     "no-access-missing-member": true,
+     "invoke-injectable": true
   }
 }

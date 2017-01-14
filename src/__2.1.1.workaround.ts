@@ -1,17 +1,15 @@
-﻿
+﻿/* tslint:disable */
 /*
  * THIS IS TEMPORARY TO PATCH 2.1.1+ Core bugs
  * See https://github.com/angular/universal/issues/606
  */
 
-/* tslint:disable */
 let __compiler__ = require('@angular/compiler');
-import { __platform_browser_private__ } from '@angular/platform-browser';
 import { __core_private__ } from '@angular/core';
 let patch = false;
-if (!__core_private__['ViewUtils']) {
+if (!(<any>__core_private__)['ViewUtils']) {
     patch = true;
-    __core_private__['ViewUtils'] = __core_private__['view_utils'];
+    (<any>__core_private__)['ViewUtils'] = (<any>__core_private__)['view_utils'];
 }
 
 
@@ -26,7 +24,7 @@ if (!__compiler__.__compiler_private__) {
 
 var __universal__ = require('angular2-platform-node/__private_imports__');
 if (patch) {
-    __universal__.ViewUtils = __core_private__['view_utils'];
+    __universal__.ViewUtils = (<any>__core_private__)['view_utils'];
     __universal__.CssSelector = __compiler__.CssSelector
     __universal__.SelectorMatcher = __compiler__.SelectorMatcher
 }

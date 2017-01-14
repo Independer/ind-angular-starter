@@ -1,6 +1,6 @@
 import {
   Component,
-  OnInit,
+  OnInit
 } from '@angular/core';
 /*
  * We're loading this component asynchronously
@@ -11,6 +11,7 @@ import {
 console.log('`Detail` component loaded asynchronously');
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'detail',
   templateUrl: './detail.component.html'
 })
