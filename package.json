@@ -27,9 +27,9 @@
     "typedoc": "typedoc",
     "version": "npm run build",
     "webpack": "webpack",
-    "server": "dotnet run",
-    "server:dev": "npm run env:dev dotnet run",
-    "server:prod": "npm run env:prod dotnet run",
+    "start": "dotnet run",
+    "start:dev": "npm run env:dev dotnet run",
+    "start:prod": "npm run env:prod dotnet run",
     "env:dev": "cross-env ASPNETCORE_ENVIRONMENT=Development",
     "env:prod": "cross-env ASPNETCORE_ENVIRONMENT=Production",
     "webdriver-manager": "webdriver-manager",
@@ -39,8 +39,8 @@
     "protractor": "protractor",
     "protractor:delay": "sleep 3 && npm run protractor",
     "protractor:live": "protractor --elementExplorer",
-    "e2e:dev": "npm run clean && npm-run-all -p -r server:dev protractor:delay",
-    "e2e:prod": "npm run clean && npm run build:prod && npm-run-all -p -r server:prod protractor",
+    "e2e:dev": "npm run clean && npm-run-all -p -r start:dev protractor:delay",
+    "e2e:prod": "npm run clean && npm run build:prod && npm-run-all -p -r start:prod protractor",
     "ci": "npm run clean && npm run build:dev && npm run e2e:dev && npm run e2e:prod && npm run clean"
   },
   "dependencies": {
