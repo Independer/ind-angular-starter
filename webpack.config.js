@@ -17,6 +17,7 @@ const V8LazyParseWebpackPlugin = require('v8-lazy-parse-webpack-plugin');
 const ngcWebpack = require('ngc-webpack');
 const CompressionPlugin = require('compression-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
 
 const env = process.env.ASPNETCORE_ENVIRONMENT || 'Development';
 const isServer = helpers.hasNpmFlag('server') || helpers.hasProcessFlag('SERVER_BUILD');
@@ -24,6 +25,7 @@ const isDev = process.env.ASPNETCORE_ENVIRONMENT === 'Production' ? false : true
 const isProd = !isDev;
 const isAot = helpers.hasNpmFlag('aot') || helpers.hasProcessFlag('AOT');
 const distPath = isServer ? 'serverdist' : 'dist';
+const tsConfigName = 'tsconfig.webpack.json';
 
 const tsLintOptions = {
   // tslint errors are displayed by default as warnings 
@@ -97,6 +99,7 @@ function makeWebpackConfig() {
     // An array of directory names to be resolved to the current directory
     modules: [helpers.root('src'), helpers.root('node_modules')],
 
+    alias: createTsConfigPathAliases(require('./' + tsConfigName))
   };
 
   config.module = {
@@ -114,7 +117,7 @@ function makeWebpackConfig() {
       {
         test: /\.ts$/,
         use: [
-          'awesome-typescript-loader?{configFileName: "tsconfig.webpack.json"}',
+          'awesome-typescript-loader?{configFileName: "' + tsConfigName + '"}',
           'angular2-template-loader',
           {
             loader: 'ng-router-loader',
@@ -212,6 +215,10 @@ function makeWebpackConfig() {
       }
     ),
 
+    new TsConfigPathsPlugin({
+      tsconfig: tsConfigName
+    }),
+
     // Experimental. See: https://gist.github.com/sokra/27b24881210b56bbaff7
     new LoaderOptionsPlugin({
       options: {
@@ -243,7 +250,7 @@ function makeWebpackConfig() {
 
     new ngcWebpack.NgcWebpackPlugin({
       disabled: !isAot,
-      tsConfig: helpers.root('tsconfig.webpack.json')
+      tsConfig: helpers.root(tsConfigName)
     })
   ];
 
@@ -425,6 +432,18 @@ function makeWebpackConfig() {
   };
 
   return config;
+}
+
+function createTsConfigPathAliases(tsConfig) {
+    var alias = {};
+    var tsPaths = tsConfig.compilerOptions.paths;
+    for (var prop in tsPaths) {
+        alias[prop] = helpers.root(tsPaths[prop][0]);
+
+        console.log('ALIAS: ' + prop + '=' + alias[prop]);
+    }    
+
+    return alias;
 }
 
 module.exports = makeWebpackConfig();

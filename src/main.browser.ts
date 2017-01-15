@@ -1,6 +1,6 @@
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppBrowserModule } from './app/app.browser.module';
-import { decorateModuleRef } from './app/environment.browser';
+import { decorateModuleRef } from 'environment';
 
 // Boot the application, either now or when the DOM content is loaded
 const platform = platformBrowserDynamic();

@@ -30,7 +30,11 @@
       "source-map",
       "uglify-js",
       "webpack"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {      
+      "environment" : [ "./src/app/environment.browser.ts" ]
+    }
   },
   "exclude": [
     "node_modules",
