@@ -34,7 +34,9 @@
   },
   "exclude": [
     "node_modules",
-    "wwwroot"
+    "wwwroot",
+    "src/**/*.aot.ts",
+    "src/**/**.aot.ts"
   ],
   "awesomeTypescriptLoaderOptions": {
     "forkChecker": true,

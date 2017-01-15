@@ -32,7 +32,9 @@
     "node_modules",
     "wwwroot",
     "src/**/*.spec.ts",
-    "src/**/*.e2e.ts"
+    "src/**/*.e2e.ts",
+    "src/**/*.aot.ts",
+    "src/**/**.aot.ts"
   ],
   "awesomeTypescriptLoaderOptions": {
     "forkChecker": true,

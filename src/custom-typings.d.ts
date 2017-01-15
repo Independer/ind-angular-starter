@@ -46,7 +46,7 @@ import * as _ from 'lodash'
  */
 
 // support NodeJS modules without type definitions
-declare module '*';
+//declare module '*';
 
 /*
 // for legacy tslint etc to understand rename 'modern-lru' with your package
