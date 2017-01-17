@@ -1,23 +1,38 @@
 {
-    "version": "0.1.0",
-    "command": "dotnet",
-    "isShellCommand": true,
-    "args": [],
-    "tasks": [
-        {
-            "taskName": "run",
-            "args": [
-                "${workspaceRoot}\\project.json",
-                "-w"
-            ],
-            "isBuildCommand": true,
-            "isWatching": true,
-            "problemMatcher": "$msCompile"
-        }
-    ],
-    "options": {
-        "env": {
-            "ASPNETCORE_ENVIRONMENT": "Development"
-        }
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "0.1.0",
+  "command": "npm",
+  "isShellCommand": true,
+  "showOutput": "always",
+  "suppressTaskName": true,
+  "tasks": [
+    {
+      "taskName": "install",
+      "args": ["install"]
+    },
+    {
+      "taskName": "re-install",
+      "args": ["run", "re-install"]
+    },
+    {
+      "taskName": "build:dev",
+      "args": ["run", "build:dev"]
+    },
+    {
+      "taskName": "build:prod",
+      "args": ["run", "build:prod"]
+    },
+    {
+      "taskName": "start:dev",
+      "args": ["run", "start:dev"],
+      "isBuildCommand": true,
+      "isWatching": true
+    },
+    {
+      "taskName": "start:prod",      
+      "args": ["run", "start:prod"],
+      "isWatching": true
     }
+  ]
 }

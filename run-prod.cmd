@@ -1,2 +1,1 @@
-SET ASPNETCORE_ENVIRONMENT=Production
-dotnet run
+npm run build:prod && npm run start:prod
