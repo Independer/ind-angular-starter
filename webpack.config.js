@@ -19,10 +19,9 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
 
-const env = process.env.ASPNETCORE_ENVIRONMENT || 'Development';
+const aspNetEnv = process.env.ASPNETCORE_ENVIRONMENT || 'Development';
 const isServer = helpers.hasNpmFlag('server') || helpers.hasProcessFlag('SERVER_BUILD');
-const isDev = process.env.ASPNETCORE_ENVIRONMENT === 'Production' ? false : true;
-const isProd = !isDev;
+const isDev = aspNetEnv === 'Production' ? false : true;  
 const isAot = helpers.hasNpmFlag('aot') || helpers.hasProcessFlag('AOT');
 const distPath = isServer ? 'serverdist' : 'dist';
 const tsConfigName = 'tsconfig.webpack.json';
@@ -38,10 +37,10 @@ const tsLintOptions = {
   failOnHint: false
 };
 
-function makeWebpackConfig() {
+function makeWebpackConfig() {  
 
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-  console.log((isServer ? 'SERVER' : 'BROWSER') + ' | ' + env.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT'));
+  console.log((isServer ? 'SERVER' : 'BROWSER') + ' | ' + aspNetEnv.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT'));
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
   var config = {};
@@ -108,7 +107,7 @@ function makeWebpackConfig() {
       {
         enforce: 'pre',
         test: /\.ts$/,
-        loader: 'tslint-loader',
+        use: 'tslint-loader',
         exclude: /(node_modules)/,
       },
 
@@ -117,24 +116,18 @@ function makeWebpackConfig() {
       {
         test: /\.ts$/,
         use: [
-          'awesome-typescript-loader?{configFileName: "' + tsConfigName + '"}',
-          'angular2-template-loader',
           {
             loader: 'ng-router-loader',
             options: {
-              loader: 'async-system',
+              loader: 'async-import',
               genDir: 'compiled',
               aot: isAot
             }
-          }
+          },
+          'awesome-typescript-loader?{configFileName: "' + tsConfigName + '"}',
+          'angular2-template-loader'          
         ],
         exclude: [/\.(spec|e2e)\.ts$/]
-      },
-
-      // Json loader support for *.json files.
-      {
-        test: /\.json$/,
-        use: 'json-loader'
       },
 
       // to string and css loader support for *.css files (from Angular components)
@@ -195,10 +188,10 @@ function makeWebpackConfig() {
 
     // NOTE: when adding more properties make sure you include them in custom-typings.d.ts
     new DefinePlugin({
-      'ENV': JSON.stringify(process.env.ASPNETCORE_ENVIRONMENT),
+      'ENV': JSON.stringify(aspNetEnv),
       'process.env': {
-        'ENV': JSON.stringify(process.env.ASPNETCORE_ENVIRONMENT),
-        'NODE_ENV': JSON.stringify(process.env.ASPNETCORE_ENVIRONMENT)
+        'ENV': JSON.stringify(aspNetEnv),
+        'NODE_ENV': JSON.stringify(aspNetEnv)
       }
     }),
 
