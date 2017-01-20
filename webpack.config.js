@@ -24,7 +24,7 @@ const isServer = helpers.hasNpmFlag('server') || helpers.hasProcessFlag('SERVER_
 const isDev = aspNetEnv === 'Production' ? false : true;  
 const isAot = helpers.hasNpmFlag('aot') || helpers.hasProcessFlag('AOT');
 const distPath = isServer ? 'serverdist' : 'dist';
-const tsConfigName = 'tsconfig.webpack.json';
+const tsConfigName = isDev ? 'tsconfig.json' : 'tsconfig.prod.json';
 
 const tsLintOptions = {
   // tslint errors are displayed by default as warnings 
@@ -47,12 +47,13 @@ function makeWebpackConfig() {
 
   config.target = isServer ? 'node' : 'web';
 
-  if (isServer) {
-    config.devtool = 'inline-source-map';
-  } else if (isDev) {
-    config.devtool = 'source-map'; // Should be 'cheap-module-source-map', but Webpack currently has problems with it: https://github.com/AngularClass/angular2-webpack-starter/issues/1328
-  } else {
-    config.devtool = 'source-map';
+  if (isDev) {
+    if (isServer) {
+      config.devtool = 'inline-source-map';
+    } 
+    else {
+      config.devtool = 'cheap-module-source-map'; 
+    }
   }
 
   // Cache generated modules and chunks to improve performance for multiple incremental builds.
