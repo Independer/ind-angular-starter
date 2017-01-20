@@ -50,7 +50,7 @@ function makeWebpackConfig() {
   if (isServer) {
     config.devtool = 'inline-source-map';
   } else if (isDev) {
-    config.devtool = 'eval-source-map';
+    config.devtool = 'source-map'; // Should be 'cheap-module-source-map', but Webpack currently has problems with it: https://github.com/AngularClass/angular2-webpack-starter/issues/1328
   } else {
     config.devtool = 'source-map';
   }
@@ -79,8 +79,7 @@ function makeWebpackConfig() {
     config.output.libraryTarget = 'commonjs';
   }
   else {
-    config.output.filename = '[name].bundle.js';
-    config.output.sourceMapFilename = '[name].bundle.map',
+    config.output.filename = '[name].bundle.js';    
     config.output.chunkFilename = '[id].chunk.js';
     config.output.publicPath = '/dist/';
     
