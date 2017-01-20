@@ -80,7 +80,7 @@ function makeWebpackConfig() {
   }
   else {
     config.output.filename = '[name].bundle.js';
-    config.output.sourceMapFilename = '[file].map';
+    config.output.sourceMapFilename = '[name].bundle.map',
     config.output.chunkFilename = '[id].chunk.js';
     config.output.publicPath = '/dist/';
     
