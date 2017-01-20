@@ -116,16 +116,9 @@ function makeWebpackConfig() {
       {
         test: /\.ts$/,
         use: [
-          {
-            loader: 'ng-router-loader',
-            options: {
-              loader: 'async-import',
-              genDir: 'compiled',
-              aot: isAot
-            }
-          },
           'awesome-typescript-loader?{configFileName: "' + tsConfigName + '"}',
-          'angular2-template-loader'          
+          'angular2-template-loader',
+          'angular-router-loader?loader=system&genDir=compiled&aot=' + isAot
         ],
         exclude: [/\.(spec|e2e)\.ts$/]
       },
