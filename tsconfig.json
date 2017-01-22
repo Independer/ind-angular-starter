@@ -33,7 +33,7 @@
     ],
     "baseUrl": ".",
     "paths": {      
-      "environment" : [ "./src/app/environment.browser.ts" ]
+      "shared": [ "./src/shared"]
     }
   },
   "exclude": [

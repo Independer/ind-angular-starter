@@ -52,7 +52,7 @@
      * Check variable name formatting to be camelCased or UPPER_CASED, ban keyword variable names.
      */ 
     "variable-name": [
-      true, "check-format", "ban-keywords"
+      true, "check-format", "ban-keywords", "allow-leading-underscore"
     ],
 
     /**
@@ -550,8 +550,8 @@
      /**
       * Below are all the codelyzer linting rules.
       */
-     "directive-selector": [true, "attribute", ["ind"], "camelCase"],
-     "component-selector": [true, "element", ["ind"], "kebab-case"],
+     "directive-selector": [false, "attribute", ["app"], "camelCase"],
+     "component-selector": [false, "element", ["app"], "kebab-case"],
      "use-input-property-decorator": true,
      "use-output-property-decorator": true,
      "use-host-property-decorator": true,

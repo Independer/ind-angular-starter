@@ -18,6 +18,7 @@ import { HomeComponent } from './home';
 import { AboutComponent } from './about';
 import { NoContentComponent } from './no-content';
 import { XLargeDirective } from './home/x-large';
+import { HttpCacheService, CacheService } from 'shared';
 
 const MODULES = [
   // Do NOT include UniversalModule, HttpModule, or JsonpModule here  
@@ -41,7 +42,9 @@ const COMPONENTS = [
 
 const PROVIDERS = [
   ...APP_RESOLVER_PROVIDERS,
-  AppState
+  AppState,
+  HttpCacheService,
+  CacheService
 ];
 
 @NgModule({

@@ -1,5 +1,5 @@
 import { platformBrowser } from '@angular/platform-browser';
-import { decorateModuleRef } from './app/environment.browser';
+import { decorateModuleRef } from './shared/environment.browser';
 import { AppBrowserModuleNgFactory } from '../compiled/src/app/app.browser.module.ngfactory';
 
 /*
