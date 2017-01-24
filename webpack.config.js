@@ -249,7 +249,8 @@ function makeWebpackConfig() {
 
     new ngcWebpack.NgcWebpackPlugin({
       disabled: !isAot,
-      tsConfig: helpers.root(tsConfigName)
+      tsConfig: helpers.root(tsConfigName),
+      resourceOverride: helpers.root('aot-empty-resource.js')
     })
   ];
 
