@@ -18,6 +18,7 @@ const ngcWebpack = require('ngc-webpack');
 const CompressionPlugin = require('compression-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const aspNetEnv = process.env.ASPNETCORE_ENVIRONMENT || 'Development';
 const isServer = helpers.hasNpmFlag('server') || helpers.hasProcessFlag('SERVER_BUILD');
@@ -25,6 +26,7 @@ const isDev = aspNetEnv === 'Production' ? false : true;
 const isAot = helpers.hasNpmFlag('aot') || helpers.hasProcessFlag('AOT');
 const distPath = isServer ? 'serverdist' : 'dist';
 const tsConfigName = isDev ? 'tsconfig.json' : 'tsconfig.prod.json';
+const analizeMode = false; // Set this flag to true to analyze what is included in the bundle using the BundleAnalyzerPlugin.
 
 const tsLintOptions = {
   // tslint errors are displayed by default as warnings 
@@ -38,6 +40,9 @@ const tsLintOptions = {
 };
 
 function makeWebpackConfig() {  
+  if (analizeMode) {
+    console.log('Running Webpack build in Anylize mode. A web browser window with statistics will be opened after the build completes sucessfully.');
+  }  
 
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
   console.log((isServer ? 'SERVER' : 'BROWSER') + ' | ' + aspNetEnv.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT'));
@@ -246,6 +251,12 @@ function makeWebpackConfig() {
       tsConfig: helpers.root(tsConfigName)
     })
   ];
+
+  if (analizeMode) {
+    config.plugins = config.plugins.concat([
+      new BundleAnalyzerPlugin()
+    ]);
+  }
 
   if (!isServer) {
     config.plugins = config.plugins.concat([

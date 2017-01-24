@@ -109,6 +109,7 @@
     "url-loader": "^0.5.7",
     "v8-lazy-parse-webpack-plugin": "^0.3.0",
     "webpack": "2.2.0",
+    "webpack-bundle-analyzer": "^2.2.1",
     "webpack-dev-middleware": "^1.9.0",
     "webpack-dev-server": "2.2.0",
     "webpack-hot-middleware": "^2.15.0",
