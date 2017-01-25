@@ -45,7 +45,7 @@
     "useWebpackText": true
   },
   "angularCompilerOptions": {
-   "genDir": "./compiled",
+   "genDir": "./aot_temp",
    "skipMetadataEmit": true
   },
   "compileOnSave": false,

@@ -126,7 +126,7 @@ function makeWebpackConfig() {
             loader: 'ng-router-loader',
             options: {
               loader: 'async-import',
-              genDir: 'compiled',
+              genDir: 'aot_temp',
               aot: isAot
             }
           },
@@ -188,7 +188,7 @@ function makeWebpackConfig() {
   };
 
   config.plugins = [   
-    new CleanWebpackPlugin([helpers.root('wwwroot', distPath), helpers.root('compiled')], {
+    new CleanWebpackPlugin([helpers.root('wwwroot', distPath), helpers.root('aot_temp')], {
       verbose: false
     }),
 
@@ -249,7 +249,8 @@ function makeWebpackConfig() {
 
     new ngcWebpack.NgcWebpackPlugin({
       disabled: !isAot,
-      tsConfig: helpers.root(tsConfigName)
+      tsConfig: helpers.root(tsConfigName),
+      resourceOverride: helpers.root('aot-empty-resource.js')
     })
   ];
 
