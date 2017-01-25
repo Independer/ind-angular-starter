@@ -27,7 +27,7 @@ const isDev = aspNetEnv === 'Production' ? false : true;
 const isAot = helpers.hasNpmFlag('aot') || helpers.hasProcessFlag('AOT');
 const distPath = isServer ? 'serverdist' : 'dist';
 const tsConfigName = isDev ? 'tsconfig.json' : 'tsconfig.prod.json';
-const analizeMode = false; // Set this flag to true to analyze what is included in the bundle using the BundleAnalyzerPlugin.
+const analyzeMode = false; // Set this flag to true to analyze what is included in the bundle using the BundleAnalyzerPlugin.
 
 const tsLintOptions = {
   // tslint errors are displayed by default as warnings 
@@ -41,8 +41,8 @@ const tsLintOptions = {
 };
 
 function makeWebpackConfig() {  
-  if (analizeMode) {
-    console.log('Running Webpack build in Anylize mode. A web browser window with statistics will be opened after the build completes sucessfully.');
+  if (analyzeMode) {
+    console.log('Running Webpack build in Analyze mode. A web browser window with statistics will be opened after the build completes sucessfully.');
   }  
 
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
@@ -253,7 +253,7 @@ function makeWebpackConfig() {
     })
   ];
 
-  if (analizeMode) {
+  if (analyzeMode) {
     config.plugins = config.plugins.concat([
       new BundleAnalyzerPlugin()
     ]);
