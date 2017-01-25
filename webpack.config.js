@@ -19,7 +19,6 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const WebpackMd5Hash = require('webpack-md5-hash');
 
 const aspNetEnv = process.env.ASPNETCORE_ENVIRONMENT || 'Development';
 const isServer = helpers.hasNpmFlag('server') || helpers.hasProcessFlag('SERVER_BUILD');
@@ -301,8 +300,6 @@ function makeWebpackConfig() {
   } else {
     if (!isServer) {
       config.plugins = config.plugins.concat([
-        new WebpackMd5Hash(),
-
         // Extracts imported CSS files into external stylesheet        
         new ExtractTextPlugin('[name].css'),
 

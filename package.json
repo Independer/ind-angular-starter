@@ -112,8 +112,7 @@
     "webpack-bundle-analyzer": "^2.2.1",
     "webpack-dev-middleware": "^1.9.0",
     "webpack-dev-server": "2.2.0",
-    "webpack-hot-middleware": "^2.15.0",
-    "webpack-md5-hash": "^0.0.5"
+    "webpack-hot-middleware": "^2.15.0"
   },
   "engines": {
     "node": ">= 4.2.1",
