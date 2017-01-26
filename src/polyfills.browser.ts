@@ -1,4 +1,5 @@
-// TODO(gdi2290): switch to DLLs
+// WARNING: When making changes to this file, we need to also make the same changes in webpack.dev.dll.js to ensure the Polyfills are not
+// constantly rebuilt in development builds.
 
 // Polyfills
 

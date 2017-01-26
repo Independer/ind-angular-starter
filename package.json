@@ -2,20 +2,16 @@
   "name": "independer-starter",
   "version": "1.0.0",
   "scripts": {
-    "build:dev": "npm run build:browser:dev",
-    "build:prod": "npm run build:server:prod && npm run build:browser:aot:prod",
-    "build:browser": "webpack --config webpack.config.js  --progress --profile --bail",
-    "build:browser:dev": "npm run env:dev npm run build:browser",
-    "build:browser:prod": "npm run env:prod npm run build:browser",
-    "build:browser:aot": "webpack --config webpack.config.js  --progress --profile --bail --env.AOT && npm run clean:aot",
-    "build:browser:aot:dev": "npm run env:dev npm run build:browser:aot",
-    "build:browser:aot:prod": "npm run env:prod npm run build:browser:aot",
-    "build:server": "webpack --config webpack.config.js  --progress --profile --bail --env.SERVER_BUILD",
-    "build:server:dev": "npm run env:dev npm run build:server",
-    "build:server:prod": "npm run env:prod npm run build:server",
+    "build": "webpack",
+    "build:prod": "npm run build:aot:prod",
+    "build:aot": "webpack && npm run clean:aot",    
+    "build:aot:prod": "webpack && npm run clean:aot",
+    "build:server": "webpack",    
+    "build:server:prod": "webpack",
     "clean:aot": "npm run rimraf -- aot_temp",
     "clean:dist": "npm run rimraf -- wwwroot/dist",
     "clean:serverdist": "npm run rimraf -- wwwroot/serverdist",
+    "clean:dll": "rimraf -- wwwroot/dll_dev",
     "clean:install": "npm set progress=false && npm install",
     "clean:npm": "npm cache clean && npm uninstall rimraf && rimraf -- node_modules",
     "clean": "npm run rimraf -- wwwroot/dist wwwroot/serverdist aot_temp",
@@ -28,7 +24,7 @@
     "version": "npm run build",
     "webpack": "webpack",
     "start": "dotnet run",
-    "start:dev": "npm run env:dev dotnet run",
+    "start:dev": "npm run env:dev dotnet watch run",
     "start:prod": "npm run env:prod dotnet run",
     "env:dev": "cross-env ASPNETCORE_ENVIRONMENT=Development",
     "env:prod": "cross-env ASPNETCORE_ENVIRONMENT=Production",
@@ -41,7 +37,7 @@
     "protractor:live": "protractor --elementExplorer",
     "e2e:dev": "npm run clean && npm-run-all -p -r start:dev protractor:delay",
     "e2e:prod": "npm run clean && npm run build:prod && npm-run-all -p -r start:prod protractor",
-    "ci": "npm run clean && npm run build:dev && npm run e2e:dev && npm run e2e:prod && npm run clean"
+    "ci": "npm run clean && npm run build && npm run e2e:dev && npm run e2e:prod && npm run clean"
   },
   "dependencies": {
     "@angular/common": "~2.4.5",
@@ -103,7 +99,7 @@
     "to-string-loader": "^1.1.5",
     "ts-helpers": "1.1.2",
     "ts-node": "^2.0.0",
-    "tslint": "~4.4.1",
+    "tslint": "~4.4.2",
     "tslint-eslint-rules": "^3.2.3",
     "tslint-loader": "^3.3.0",
     "typescript": "~2.1.5",
@@ -113,10 +109,11 @@
     "webpack-bundle-analyzer": "^2.2.1",
     "webpack-dev-middleware": "^1.9.0",
     "webpack-dev-server": "2.2.0",
+    "webpack-dll-bundles-plugin": "^1.0.0-beta.2",
     "webpack-hot-middleware": "^2.15.0"
   },
   "engines": {
-    "node": ">= 4.2.1",
+    "node": ">= 6.9.4",
     "npm": ">= 3"
   }
 }

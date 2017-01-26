@@ -235,6 +235,8 @@ _Pvt_Extensions
 
 # compiled output
 /wwwroot/dist
+/wwwroot/serverdist
+/wwwroot/dll_dev
 /aot_temp
 /tmp
 
@@ -266,4 +268,3 @@ testem.log
 #System Files
 .DS_Store
 Thumbs.db
-/wwwroot/serverdist

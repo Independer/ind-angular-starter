@@ -20,11 +20,12 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const OptimizeJsPlugin = require('optimize-js-plugin');
+const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
 
-const aspNetEnv = process.env.ASPNETCORE_ENVIRONMENT || 'Development';
-const isServer = helpers.hasNpmFlag('server') || helpers.hasProcessFlag('SERVER_BUILD');
-const isDev = aspNetEnv === 'Production' ? false : true;  
-const isAot = helpers.hasNpmFlag('aot') || helpers.hasProcessFlag('AOT');
+const env = helpers.hasNpmFlag('prod') ? 'Production' : (process.env.ASPNETCORE_ENVIRONMENT || 'Development');
+const isServer = helpers.hasNpmFlag('server');
+const isDev = env === 'Production' ? false : true;  
+const isAot = helpers.hasNpmFlag('aot');
 const distPath = isServer ? 'serverdist' : 'dist';
 const tsConfigName = isDev ? 'tsconfig.json' : 'tsconfig.prod.json';
 const analyzeMode = false; // Set this flag to true to analyze what is included in the bundle using the BundleAnalyzerPlugin.
@@ -46,7 +47,7 @@ function makeWebpackConfig() {
   }  
 
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-  console.log((isServer ? 'SERVER' : 'BROWSER') + ' | ' + aspNetEnv.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT'));
+  console.log((isServer ? 'SERVER' : 'BROWSER') + ' | ' + env.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT'));
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
   var config = {};
@@ -127,7 +128,8 @@ function makeWebpackConfig() {
             options: {
               loader: 'async-import',
               genDir: 'aot_temp',
-              aot: isAot
+              aot: isAot,
+              debug: false
             }
           },
           'awesome-typescript-loader?{configFileName: "' + tsConfigName + '"}',
@@ -194,10 +196,10 @@ function makeWebpackConfig() {
 
     // NOTE: when adding more properties make sure you include them in custom-typings.d.ts
     new DefinePlugin({
-      'ENV': JSON.stringify(aspNetEnv),
+      'ENV': JSON.stringify(env),
       'process.env': {
-        'ENV': JSON.stringify(aspNetEnv),
-        'NODE_ENV': JSON.stringify(aspNetEnv)
+        'ENV': JSON.stringify(env),
+        'NODE_ENV': JSON.stringify(env)
       }
     }),
 
@@ -298,6 +300,18 @@ function makeWebpackConfig() {
         }
       })
     ]);
+
+    if (!isServer) {
+      var dllConfig = require('./webpack.dev.dll.js');
+
+      config.plugins = config.plugins.concat([       
+        new DllBundlesPlugin({
+          bundles: dllConfig.bundles,
+          dllDir: helpers.root('wwwroot', 'dll_dev'),
+          webpackConfig: dllConfig.webpackConfig
+        })
+      ]);
+    }
   } else {
     if (!isServer) {
       config.plugins = config.plugins.concat([

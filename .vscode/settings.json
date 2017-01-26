@@ -22,7 +22,8 @@
         "**/coverage": true,
         "**/aot_temp": true,
         "**/wwwroot/dist": true,
-        "**/wwwroot/serverdist": true
+        "**/wwwroot/serverdist": true,
+        "**/wwwroot/dll_dev": true
     },
     "typescript.tsdk": "./node_modules/typescript/lib",
     "tslint.autoFixOnSave": true

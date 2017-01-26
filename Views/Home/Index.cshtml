@@ -9,6 +9,11 @@ else {
   <app>Loading...</app>
 }
 
+<environment names="Development">
+  <script src="~/dll_dev/polyfills.dll.js" asp-append-version="true"></script>
+  <script src="~/dll_dev/vendor.dll.js" asp-append-version="true"></script>
+</environment>
+
 <script src="~/dist/polyfills.bundle.js" asp-append-version="true"></script>
 <script src="~/dist/vendor.bundle.js" asp-append-version="true"></script>
 <script src="~/dist/main.bundle.js" asp-append-version="true"></script>
