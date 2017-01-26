@@ -91,6 +91,7 @@
     "ngc-webpack": "~1.1.3",
     "node-sass": "^4.3.0",
     "npm-run-all": "^4.0.1",
+    "optimize-js-plugin": "0.0.4",
     "parse5": "^2.2.1",
     "protractor": "^5.0.0",
     "raw-loader": "0.5.1",
