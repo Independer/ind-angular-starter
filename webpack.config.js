@@ -5,7 +5,6 @@ const helpers = require('./helpers');
 const NormalModuleReplacementPlugin = require('webpack/lib/NormalModuleReplacementPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
-const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
@@ -202,9 +201,6 @@ function makeWebpackConfig() {
         'NODE_ENV': JSON.stringify(env)
       }
     }),
-
-    // Do type checking in a separate process, so webpack don't need to wait.
-    new CheckerPlugin(),    
 
     // Provides context to Angular's use of System.import. See: https://github.com/angular/angular/issues/11580
     new ContextReplacementPlugin(

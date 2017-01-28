@@ -42,10 +42,6 @@
     "src/**/*.aot.ts",
     "src/**/**.aot.ts"
   ],
-  "awesomeTypescriptLoaderOptions": {
-    "forkChecker": true,
-    "useWebpackText": true
-  },
   "angularCompilerOptions": {
    "genDir": "./aot_temp",
    "skipMetadataEmit": true
