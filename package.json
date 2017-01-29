@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "webpack",
-    "build:prod": "npm run build:aot:prod",
+    "build:prod": "npm run build:aot:prod && npm run build:server:prod",
     "build:aot": "webpack && npm run clean:aot",    
     "build:aot:prod": "webpack && npm run clean:aot",
     "build:server": "webpack",    
