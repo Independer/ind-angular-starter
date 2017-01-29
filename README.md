@@ -1,7 +1,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/8g11158wx2f53g1x?svg=true)](https://ci.appveyor.com/project/pglazkov/independerstarter)
 
 # Angular 2 Starter by www.independer.nl
-An Angular 2 starter project that we use at www.independer.nl as a starting point for Angular-based projects.  
+Angular 2 starter project that we use at www.independer.nl as a starting point for Angular-based projects.  
 
 Based on:
 * Angular2 Webpack Starter - https://github.com/AngularClass/angular2-webpack-starter
