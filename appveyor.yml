@@ -26,5 +26,5 @@ cache:
 
 before_build:
   - dotnet restore
-build:
-  - npm run ci
+build_script:
+- cmd: npm run ci
