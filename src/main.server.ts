@@ -1,6 +1,5 @@
 import 'angular2-universal-polyfills/node'; // HAS TO BE THE FIRST IMPORT IN THIS FILE - Workaround for https://github.com/angular/angular/issues/13609
 import './__2.1.1.workaround'; // temporary until 2.1.1 things are patched in Core. See https://github.com/angular/universal/issues/606
-import 'ts-helpers';
 import 'zone.js';
 import { createServerRenderer, RenderResult } from 'aspnet-prerendering';
 import { enableProdMode } from '@angular/core';

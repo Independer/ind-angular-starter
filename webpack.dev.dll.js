@@ -82,7 +82,6 @@ var bundles = {
       name: 'zone.js',
       path: 'zone.js/dist/long-stack-trace-zone.js'
     },
-    'ts-helpers',
   ],
   vendor: [
     '@angular/platform-browser',
@@ -99,7 +98,8 @@ var bundles = {
       name: 'style-loader',
       path: 'style-loader/addStyles.js'
     },
-    'css-loader'
+    'css-loader',
+    'tslib'
   ]
 };
 
