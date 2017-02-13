@@ -157,7 +157,7 @@ function makeWebpackConfig() {
       // Returns file content as string
       {
         test: /\.css$/,
-        loader: isServer ? ('to-string-loader!css-loader') : (isDev ? 'style-loader!css-loader' : ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader' })),
+        loader: isServer ? ('to-string-loader!css-loader') : (isDev ? 'style-loader!css-loader' : ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' })),
         include: [helpers.root('src', 'styles')]
       },
 
@@ -166,8 +166,8 @@ function makeWebpackConfig() {
       {
         test: /\.scss$/,
         loader: isServer ? ('to-string-loader!css-loader!sass-loader') : (isDev ? 'style-loader!css-loader!sass-loader' : ExtractTextPlugin.extract({
-          fallbackLoader: 'style-loader',
-          loader: 'css-loader!sass-loader'
+          fallback: 'style-loader',
+          use: 'css-loader!sass-loader'
         })),
         include: [helpers.root('src', 'styles')]
       },
