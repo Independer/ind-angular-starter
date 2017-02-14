@@ -29,11 +29,7 @@ exports.config = {
         'chromeOptions': {
             'args': ['show-fps-counter=true']
         }
-    },
-
-    onPrepare: function () {
-        browser.ignoreSynchronization = true;
-    },
+    },   
 
     /**
      * Angular 2 configuration
