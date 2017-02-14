@@ -132,11 +132,6 @@
     "member-ordering": [true, { "order": "fields-first" }],
 
     /**
-     * Don't use any, because it removes the compile-time benefits of TypeScript.
-     */
-    "no-any": true,
-
-    /**
      * Disallows the use constant number values outside of variable assignments.
      * Exceptions are -1, 0, 1 and 10, because they are commonly used in loops, etc.
      * 10 is used for parseInt's radix parameter.

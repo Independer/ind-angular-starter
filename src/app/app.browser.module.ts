@@ -44,10 +44,8 @@ export class AppBrowserModule {
   }
 
   // Universal Cache "hook
-  // tslint:disable-next-line:no-any
   _getCacheValue(key: string, defaultValue: any): any {
     // Get cache that came from the server
-    // tslint:disable-next-line:no-any
     const win: any = window;
     if (win[UNIVERSAL_KEY] && win[UNIVERSAL_KEY][key]) {
       let serverCache = defaultValue;

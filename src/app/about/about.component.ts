@@ -11,7 +11,6 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class AboutComponent implements OnInit {
 
-  // tslint:disable-next-line:no-any
   public localState: any;
   constructor(
     public route: ActivatedRoute
@@ -20,7 +19,6 @@ export class AboutComponent implements OnInit {
   public ngOnInit() {
     this.route
       .data
-      // tslint:disable-next-line:no-any
       .subscribe((data: any) => {
         // your resolved data from route
         this.localState = data.yourData;

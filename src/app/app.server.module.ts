@@ -33,8 +33,7 @@ export class AppServerModule {
   /** Universal Cache "hook"
    * We need to use the arrow function here to bind the context as this is a gotcha
    * in Universal for now until it's fixed
-   */
-  // tslint:disable-next-line:no-any
+   */  
   universalDoDehydrate = (universalCache: any) => {
     console.log('universalDoDehydrate ****');
     universalCache[CacheService.KEY] = JSON.stringify(this._cache.dehydrate());

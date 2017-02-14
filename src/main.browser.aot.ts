@@ -5,7 +5,6 @@ import { AppBrowserModuleNgFactory } from '../aot_temp/src/app/app.browser.modul
 /*
  * Bootstrap our Angular app with a top level NgModule
  */
-// tslint:disable-next-line:no-any
 export function main(): Promise<any> {
   return platformBrowser()
     .bootstrapModuleFactory(AppBrowserModuleNgFactory)    

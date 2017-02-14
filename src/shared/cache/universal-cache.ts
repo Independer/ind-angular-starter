@@ -15,8 +15,7 @@ export class CacheService {
 
   /**
    * store our state
-   */
-  // tslint:disable-next-line:no-any
+   */  
   set(key: string | number, value: any): void {
     let _key = this.normalizeKey(key);
     this._cache.set(_key, value);
@@ -24,8 +23,7 @@ export class CacheService {
 
   /**
    * get our cached value
-   */
-  // tslint:disable-next-line:no-any
+   */  
   get(key: string | number): any {
     let _key = this.normalizeKey(key);
     return this._cache.get(_key);
@@ -52,19 +50,16 @@ export class CacheService {
 
   /**
    * convert to json for the client
-   */
-  // tslint:disable-next-line:no-any
+   */  
   dehydrate(): any {
-    let json = {};
-    // tslint:disable-next-line:no-any
+    let json = {};    
     this._cache.forEach((value: any, key: string) => (<any>json)[key] = value);
     return json;
   }
 
   /**
    * convert server json into out initial state
-   */
-  // tslint:disable-next-line:no-any
+   */  
   rehydrate(json: any): void {
     Object.keys(json).forEach((key: string) => {
       let _key = this.normalizeKey(key);
@@ -75,8 +70,7 @@ export class CacheService {
 
   /**
    * allow JSON.stringify to work
-   */
-  // tslint:disable-next-line:no-any
+   */  
   toJSON(): any {
     return this.dehydrate();
   }
@@ -91,8 +85,7 @@ export class CacheService {
 
     return key + '';
   }
-
-  // tslint:disable-next-line:no-any
+  
   _isInvalidValue(key: any): boolean {
     return !key || typeof key === 'boolean' || Number.isNaN(<number>key);
   }
