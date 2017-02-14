@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 
-namespace IndependerStarter.Controllers {
+namespace IndependerStarter.Server.Controllers {
   [Route("api/[controller]")]
   public class TestController : Controller {
     private static string[] Names = new[] {

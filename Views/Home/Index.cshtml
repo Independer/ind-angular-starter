@@ -1,4 +1,5 @@
-@model IndependerStarter.Models.IndexViewModel
+@using IndependerStarter.Server.Models
+@model IndexViewModel
 
 @if (Model.IsServerRenderingEnabled) {
   <app asp-prerender-module="@Model.ServerRenderingModulePath">

@@ -58,6 +58,6 @@
   },
 
   "tooling": {
-    "defaultNamespace": "IndependerStarter"
+    "defaultNamespace": "IndependerStarter.Server"
   }
 }
