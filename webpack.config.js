@@ -104,7 +104,7 @@ function makeWebpackConfig() {
     // An array of directory names to be resolved to the current directory
     modules: [helpers.root('src'), helpers.root('node_modules')],
 
-    alias: createTsConfigPathAliases(require('./' + tsConfigName))
+    alias: helpers.createTsConfigPathAliases(require('./' + tsConfigName))
   };
 
   config.module = {
@@ -452,18 +452,6 @@ function makeWebpackConfig() {
   };
 
   return config;
-}
-
-function createTsConfigPathAliases(tsConfig) {
-    var alias = {};
-    var tsPaths = tsConfig.compilerOptions.paths;
-    for (var prop in tsPaths) {
-        alias[prop] = helpers.root(tsPaths[prop][0]);
-
-        console.log('ALIAS: ' + prop + '=' + alias[prop]);
-    }    
-
-    return alias;
 }
 
 module.exports = makeWebpackConfig();

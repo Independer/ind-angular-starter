@@ -237,6 +237,7 @@ _Pvt_Extensions
 /wwwroot/dist
 /wwwroot/serverdist
 /wwwroot/dll_dev
+/wwwroot/coverage
 /aot_temp
 /tmp
 

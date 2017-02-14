@@ -6,33 +6,21 @@
   "isShellCommand": true,
   "showOutput": "always",
   "suppressTaskName": true,
-  "tasks": [
-    {
-      "taskName": "install",
-      "args": ["install"]
-    },
-    {
-      "taskName": "re-install",
-      "args": ["run", "re-install"]
-    },
-    {
-      "taskName": "build:dev",
-      "args": ["run", "build:dev"]
-    },
-    {
-      "taskName": "build:prod",
-      "args": ["run", "build:prod"]
-    },
-    {
+  "_runner": "terminal",
+  "tasks": [{
       "taskName": "start:dev",
       "args": ["run", "start:dev"],
       "isBuildCommand": true,
-      "isWatching": true
+      "isBackground": true
     },
     {
-      "taskName": "start:prod",      
-      "args": ["run", "start:prod"],
-      "isWatching": true
+      "taskName": "test",
+      "args": ["run", "test"]
+    },
+    {
+      "taskName": "test:watch",
+      "args": ["run", "test:watch"],
+      "isBackground": true
     }
   ]
 }

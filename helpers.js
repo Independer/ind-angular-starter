@@ -13,7 +13,7 @@ function hasNpmFlag(flag) {
 }
 
 function isWebpackDevServer() {
-  return process.argv[1] && !! (/webpack-dev-server/.exec(process.argv[1]));
+  return process.argv[1] && !!(/webpack-dev-server/.exec(process.argv[1]));
 }
 
 function root(args) {
@@ -21,7 +21,20 @@ function root(args) {
   return path.join.apply(path, [__dirname].concat(args));
 }
 
+function createTsConfigPathAliases(tsConfig) {
+  var alias = {};
+  var tsPaths = tsConfig.compilerOptions.paths;
+  for (var prop in tsPaths) {
+    alias[prop] = root(tsPaths[prop][0]);
+
+    console.log('ALIAS: ' + prop + '=' + alias[prop]);
+  }
+
+  return alias;
+}
+
 exports.hasProcessFlag = hasProcessFlag;
 exports.hasNpmFlag = hasNpmFlag;
 exports.isWebpackDevServer = isWebpackDevServer;
 exports.root = root;
+exports.createTsConfigPathAliases = createTsConfigPathAliases;
