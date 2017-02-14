@@ -30,7 +30,21 @@ module.exports = function (config) {
     files: [{
       pattern: './spec-bundle.js',
       watched: false
+    },
+    { 
+      pattern: './wwwroot/assets/**/*', 
+      watched: false, 
+      included: false, 
+      served: true, 
+      nocache: false 
     }],
+
+    /*
+     * By default all assets are served at http://localhost:[PORT]/base/
+     */
+    proxies: {
+      "/assets/": "/base/wwwroot/assets/"
+    },
 
     /*
      * preprocess matching files before serving them to the browser
