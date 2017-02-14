@@ -8,7 +8,7 @@ describe('App', () => {
 
   it('should have a title', () => {
     let subject = browser.getTitle();
-    let result = 'IndependerStarter';
+    let result = 'Independer Angular Starter';
     expect(subject).toEqual(result);
   });
 

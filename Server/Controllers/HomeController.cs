@@ -1,10 +1,10 @@
-﻿using IndependerStarter.Server.Configuration;
-using IndependerStarter.Server.Models;
+﻿using IndAngularStarter.Server.Configuration;
+using IndAngularStarter.Server.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace IndependerStarter.Server.Controllers {
+namespace IndAngularStarter.Server.Controllers {
   public class HomeController : Controller {
     private readonly IHostingEnvironment env;
     private readonly IOptionsSnapshot<ServerRenderingOptions> serverRenderingOptionsAccessor;

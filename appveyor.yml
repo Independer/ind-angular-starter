@@ -7,7 +7,7 @@ branches:
 configuration: Release
 platform: Any CPU
 environment:
-  website_name: IndependerStarter
+  website_name: ind-angular-starter
   nodejs_version: "6.9.4"
 
 install:

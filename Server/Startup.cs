@@ -1,6 +1,6 @@
 using System;
 using CompressedStaticFiles;
-using IndependerStarter.Server.Configuration;
+using IndAngularStarter.Server.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace IndependerStarter.Server {
+namespace IndAngularStarter.Server {
   public class Startup {
     public Startup(IHostingEnvironment env) {
       var builder = new ConfigurationBuilder()
