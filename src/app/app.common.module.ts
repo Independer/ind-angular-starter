@@ -13,15 +13,15 @@ import { RouterModule, PreloadAllModules } from '@angular/router';
 import { AppComponent } from './app.component';
 import { ROUTES } from './app.routes';
 import { APP_RESOLVER_PROVIDERS } from './app.resolver';
-import { AppState } from './app.service';
 import { HomeComponent } from './home';
 import { AboutComponent } from './about';
 import { NoContentComponent } from './no-content';
 import { XLargeDirective } from './home/x-large';
-import { HttpCacheService, CacheService } from 'shared';
+import { CoreModule } from 'shared';
 
 const MODULES = [
-  // Do NOT include UniversalModule, HttpModule, or JsonpModule here  
+  // Do NOT include UniversalModule, HttpModule, or JsonpModule here    
+  CoreModule,
   CommonModule,
   RouterModule.forRoot(ROUTES, { preloadingStrategy: PreloadAllModules })
 ];
@@ -40,10 +40,7 @@ const COMPONENTS = [
 ];
 
 const PROVIDERS = [
-  ...APP_RESOLVER_PROVIDERS,
-  AppState,
-  HttpCacheService,
-  CacheService
+  ...APP_RESOLVER_PROVIDERS
 ];
 
 @NgModule({

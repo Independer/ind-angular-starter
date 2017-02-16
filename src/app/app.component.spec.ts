@@ -7,7 +7,6 @@ import {
 
 // Load the implementations that should be tested
 import { AppComponent } from './app.component';
-import { AppState } from './app.service';
 
 describe(`App`, () => {
   let comp: AppComponent;
@@ -18,7 +17,7 @@ describe(`App`, () => {
     TestBed.configureTestingModule({
       declarations: [AppComponent],
       schemas: [NO_ERRORS_SCHEMA],
-      providers: [AppState]
+      providers: []
     })
     .compileComponents(); // compile template and css
   }));

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AppState } from './app.service';
 
 import '../styles/app.scss';
 
@@ -14,11 +13,7 @@ export class AppComponent implements OnInit {
   public name = 'Angular 2 Webpack Starter';
   public url = 'https://www.independer.nl';
 
-  constructor(
-    public appState: AppState
-  ) {}
-
   public ngOnInit() {
-    console.log('Initial App State', this.appState.state);
+    console.log('AppComponent ngOnInit');
   }
 }

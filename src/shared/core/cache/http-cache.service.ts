@@ -8,8 +8,7 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/share';
 
-import { CacheService } from './universal-cache';
-
+import { CacheService } from './cache.service';
 
 @Injectable()
 export class HttpCacheService {
