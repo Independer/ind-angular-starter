@@ -82,8 +82,6 @@
     "css-loader": "0.26.1",    
     "extract-text-webpack-plugin": "2.0.0-rc.3",
     "file-loader": "0.10.0",
-    "gh-pages": "0.12.0",
-    "imports-loader": "0.7.0",
     "istanbul-instrumenter-loader": "2.0.0",
     "json-loader": "0.5.4",
     "karma": "1.4.1",
@@ -99,13 +97,11 @@
     "node-sass": "4.5.0",
     "npm-run-all": "4.0.1",
     "optimize-js-plugin": "0.0.4",
-    "parse5": "2.2.1",
     "protractor": "5.1.1",
     "raw-loader": "0.5.1",
     "rimraf": "2.5.4",
     "sass-loader": "4.1.1",
     "source-map-loader": "0.1.6",
-    "string-replace-loader": "1.0.5",
     "style-loader": "0.13.1",
     "to-string-loader": "1.1.5",
     "ts-node": "2.1.0",
@@ -115,7 +111,6 @@
     "tslint-loader": "3.4.2",
     "typescript": "2.1.6",
     "url-loader": "0.5.7",
-    "v8-lazy-parse-webpack-plugin": "0.3.0",
     "webpack": "2.2.1",
     "webpack-bundle-analyzer": "2.3.0",
     "webpack-dev-middleware": "1.10.0",
@@ -125,7 +120,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pglazkov/ind-angular-starter.git"
+    "url": "https://github.com/independer/ind-angular-starter.git"
   },
   "engines": {
     "node": ">= 6.9.4",
