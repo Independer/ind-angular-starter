@@ -6,7 +6,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "noUnusedLocals": true,    
     "sourceMap": false,
     "noEmit": true,
     "noEmitHelpers": true,
