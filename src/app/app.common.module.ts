@@ -17,13 +17,13 @@ import { HomeComponent } from './home';
 import { AboutComponent } from './about';
 import { NoContentComponent } from './no-content';
 import { XLargeDirective } from './home/x-large';
-import { CoreModule } from 'shared';
+import { CacheModule } from 'shared';
 
 const MODULES = [
   // Do NOT include UniversalModule, HttpModule, or JsonpModule here    
-  CoreModule,
   CommonModule,
-  RouterModule.forRoot(ROUTES, { preloadingStrategy: PreloadAllModules })
+  RouterModule.forRoot(ROUTES, { preloadingStrategy: PreloadAllModules }),
+  CacheModule.forRoot()
 ];
 
 const PIPES: any[] = [
