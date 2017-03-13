@@ -9,13 +9,17 @@
     <PackageId>ind-angular-starter</PackageId>
     <UserSecretsId>aspnet-WebApplication-0799fe3e-6eaf-4c5f-b40e-7c6bfd5dfa9a</UserSecretsId>
     <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
+    <Npm>"C:\Program Files\nodejs\npm"</Npm>
+    <ReplaceContentWithNonePattern>wwwroot/**;appsettings*.*;*.json</ReplaceContentWithNonePattern>
+    <PublishFilesPattern>Views\**;appsettings.json;appsettings.Production.json;wwwroot\*.*;wwwroot\dist\**;wwwroot\serverdist\**;wwwroot\assets\**</PublishFilesPattern>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="node_modules\**\*;src\**\*" />
-    <None Update="wwwroot\**\*">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </None>
+    <Compile Remove="node_modules\**;src\**;wwwroot\**" />
+
+    <!-- Exclude all content that is included by default by the SDK from publish and add only what we need later (see "PublishFilesPattern" property above and "PreparePublish" target below) -->
+    <Content Remove="$(ReplaceContentWithNonePattern)" />
+    <None Include="$(ReplaceContentWithNonePattern)" />   
   </ItemGroup>
 
   <ItemGroup>
@@ -32,14 +36,28 @@
     <PackageReference Include="CompressedStaticFiles" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.1" />
   </ItemGroup>
-
-  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
-    <Exec Command="npm install" />
-    <Exec Command="npm run build:prod" />
-  </Target>
-
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="1.0.0" />
   </ItemGroup>
 
+  <Target Name="CleanBeforePublish" BeforeTargets="BeforePublish">
+    <RemoveDir Directories="$(PublishDir)" ContinueOnError="true" />
+  </Target>
+
+  <Target Name="PreparePublish" AfterTargets="ComputeFilesToPublish">
+    <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+    <Exec Command="$(Npm) install" />
+    <Exec Command="$(Npm) run build:prod" />
+
+    <!-- Add the content that we want to publish (with newly-built files) to the publish output -->
+    <!-- Note that we cannot include those files as part of the "Content" item outside of this target
+         because the output files from the commands above would not be included in that case. -->
+    <ItemGroup>
+      <DistFiles Include="$(PublishFilesPattern)" />
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>%(DistFiles.Identity)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
 </Project>
