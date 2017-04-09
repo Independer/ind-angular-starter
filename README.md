@@ -1,27 +1,25 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/8g11158wx2f53g1x?svg=true)](https://ci.appveyor.com/project/pglazkov/IndependerStarter)
 
-# Angular 2 Starter by www.independer.nl
-Angular 2 starter project that we use at www.independer.nl as a starting point for Angular-based projects.  
+# Angular Starter by www.independer.nl
+Angular starter project that we use at www.independer.nl as a starting point for Angular-based projects.  
 
 Based on:
 * Angular2 Webpack Starter - https://github.com/AngularClass/angular2-webpack-starter
-* ASP.NET Core & Angular 2+ Universal starter - https://github.com/MarkPieszak/aspnetcore-angular2-universal 
 * AspNetCoreSpa - https://github.com/asadsahi/AspNetCoreSpa
-* JavaScriptServices - https://github.com/aspnet/JavaScriptServices (aspnetcore-spa Yeoman generator)
+* JavaScriptServices - https://github.com/aspnet/JavaScriptServices
 
 ## Features
 
 * ASP.NET Core
 * Angular 2+
-* Angular Universal (server-side rendering)
 * Webpack 2
 * Typescript 2
 * AOT compilation
 * SASS
-* End-to-end testing of Angular 2 code using Protractor.
+* End-to-end testing of Angular 2 code using Protractor
 * HMR (Hot Module Replacement) with Webpack
 * Webpack DLL support for fast builds in development mode
-* Lazy routes.
+* Lazy routes
  
 ## Pre-requisites
 
@@ -54,7 +52,6 @@ Based on:
 ## Other commands
 
 ### Build Production bundles
-This will build two sets of bundles: one for the browser (in the `wwwroot/dist`) and one for server-side rendering (in `wwwroot/serverdist`).
 ```bash
 npm run build:prod
 ```
