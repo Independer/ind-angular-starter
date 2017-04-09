@@ -91,9 +91,7 @@ var bundles = {
     '@angular/forms',
     '@angular/http',
     '@angular/router',
-    'rxjs',    
-    'preboot',
-    'angular2-universal',
+    'rxjs',
     {
       name: 'style-loader',
       path: 'style-loader/addStyles.js'

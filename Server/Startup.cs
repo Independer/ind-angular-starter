@@ -1,6 +1,5 @@
 using System;
 using CompressedStaticFiles;
-using IndAngularStarter.Server.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
@@ -27,8 +26,6 @@ namespace IndAngularStarter.Server {
       // Add framework services.
       services.AddMvc();
       services.AddNodeServices();
-
-      services.Configure<ServerRenderingOptions>(Configuration.GetSection("ServerRendering"));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

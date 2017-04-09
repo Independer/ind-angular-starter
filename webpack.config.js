@@ -7,9 +7,7 @@ const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin')
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
-const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const IgnorePlugin = require('webpack/lib/IgnorePlugin');
 const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const ngcWebpack = require('ngc-webpack');
@@ -21,10 +19,9 @@ const OptimizeJsPlugin = require('optimize-js-plugin');
 const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
 
 const env = helpers.hasNpmFlag('prod') ? 'Production' : (process.env.ASPNETCORE_ENVIRONMENT || 'Development');
-const isServer = helpers.hasNpmFlag('server');
 const isDev = env === 'Production' ? false : true;  
 const isAot = helpers.hasNpmFlag('aot');
-const distPath = isServer ? 'serverdist' : 'dist';
+const distPath = 'dist';
 const tsConfigName = isDev ? 'tsconfig.json' : 'tsconfig.prod.json';
 const analyzeMode = false; // Set this flag to true to analyze what is included in the bundle using the BundleAnalyzerPlugin.
 
@@ -45,20 +42,15 @@ function makeWebpackConfig() {
   }  
 
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-  console.log((isServer ? 'SERVER' : 'BROWSER') + ' | ' + env.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT'));
+  console.log(env.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT'));
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
   var config = {};
 
-  config.target = isServer ? 'node' : 'web';
+  config.target = 'web';
 
   if (isDev) {
-    if (isServer) {
-      config.devtool = 'inline-source-map';
-    } 
-    else {
-      config.devtool = 'cheap-module-source-map'; 
-    }
+    config.devtool = 'cheap-module-source-map'; 
   }
 
   // Cache generated modules and chunks to improve performance for multiple incremental builds.
@@ -68,32 +60,21 @@ function makeWebpackConfig() {
 
   config.entry = {};
 
-  if (isServer) {
-    config.entry['main-server'] = './src/main.server.ts';
-  }
-  else {
-    config.entry['polyfills'] = './src/polyfills.browser.ts';
-    config.entry['main'] = isAot ? './src/main.browser.aot.ts' : './src/main.browser.ts';
-  }
+  config.entry['polyfills'] = './src/polyfills.ts';
+  config.entry['main'] = isAot ? './src/main.aot.ts' : './src/main.ts';
 
   config.output = {
     path: helpers.root('wwwroot', distPath)
   };
 
-  if (isServer) {
-    config.output.filename = '[name].js';
-    config.output.libraryTarget = 'commonjs';
+  config.output.filename = '[name].bundle.js';    
+  config.output.chunkFilename = '[id].[chunkhash].chunk.js';
+  config.output.publicPath = '/dist/';
+  
+  if (isDev) {
+    config.output.library = 'ac_[name]';
+    config.output.libraryTarget = 'var';
   }
-  else {
-    config.output.filename = '[name].bundle.js';    
-    config.output.chunkFilename = '[id]' + (isDev || isServer ? '' : '.[chunkhash]') + '.chunk.js';
-    config.output.publicPath = '/dist/';
-    
-    if (isDev) {
-      config.output.library = 'ac_[name]';
-      config.output.libraryTarget = 'var';
-    }
-  }  
 
   config.resolve = {
 
@@ -156,7 +137,7 @@ function makeWebpackConfig() {
       // Returns file content as string
       {
         test: /\.css$/,
-        loader: isServer ? ('to-string-loader!css-loader') : (isDev ? 'style-loader!css-loader' : ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' })),
+        loader: isDev ? 'style-loader!css-loader' : ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' }),
         include: [helpers.root('src', 'styles')]
       },
 
@@ -164,10 +145,10 @@ function makeWebpackConfig() {
       // Returns compiled css content as string
       {
         test: /\.scss$/,
-        loader: isServer ? ('to-string-loader!css-loader!sass-loader') : (isDev ? 'style-loader!css-loader!sass-loader' : ExtractTextPlugin.extract({
+        loader: isDev ? 'style-loader!css-loader!sass-loader' : ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: 'css-loader!sass-loader'
-        })),
+        }),
         include: [helpers.root('src', 'styles')]
       },
 
@@ -248,16 +229,30 @@ function makeWebpackConfig() {
       disabled: !isAot,
       tsConfig: helpers.root(tsConfigName),
       resourceOverride: helpers.root('aot-empty-resource.js')
-    })
-  ];
+    })    
+  ];  
+  
+  if (isDev) {
+    var dllConfig = require('./webpack.dev.dll.js');
 
-  if (analyzeMode) {
     config.plugins = config.plugins.concat([
-      new BundleAnalyzerPlugin()
-    ]);
-  }
+      // Eperimental. See: https://gist.github.com/sokra/27b24881210b56bbaff7
+      new LoaderOptionsPlugin({
+        debug: true,
+        options: {
+          tslint: tsLintOptions
+        }
+      }),
 
-  if (!isServer) {
+      new DllBundlesPlugin({
+        bundles: dllConfig.bundles,
+        dllDir: helpers.root('wwwroot', 'dll_dev'),
+        webpackConfig: dllConfig.webpackConfig
+      })
+    ]);
+  } 
+  
+  if (!isDev) {
     config.plugins = config.plugins.concat([
       // Shares common code between the pages.It identifies common modules and put them into a commons chunk.
       // See: https://github.com/webpack/docs/wiki/optimization#multi-page-app
@@ -275,59 +270,22 @@ function makeWebpackConfig() {
       new CommonsChunkPlugin({
         name: ['polyfills', 'vendor'].reverse()
       }),
-    ]);
-  } 
-  else {
-    config.plugins = config.plugins.concat([
-      // Workaround for the  "Module not found: Error: Can't resolve 'vertx' in '<path>\node_modules\es6-promise\dist'" warning
-      // on server build. This appears to be not an issue and can be ignored (https://github.com/webpack/webpack/issues/353).
-      new IgnorePlugin(/vertx/)
-    ]);      
-  }
-  
-  if (isDev) {
-    config.plugins = config.plugins.concat([
-      // Eperimental. See: https://gist.github.com/sokra/27b24881210b56bbaff7
-      new LoaderOptionsPlugin({
-        debug: true,
-        options: {
-          tslint: tsLintOptions
-        }
-      })
-    ]);
 
-    if (!isServer) {
-      var dllConfig = require('./webpack.dev.dll.js');
+      new OptimizeJsPlugin({
+        sourceMap: false
+      }),
 
-      config.plugins = config.plugins.concat([       
-        new DllBundlesPlugin({
-          bundles: dllConfig.bundles,
-          dllDir: helpers.root('wwwroot', 'dll_dev'),
-          webpackConfig: dllConfig.webpackConfig
-        })
-      ]);
-    }
-  } else {
-    if (!isServer) {
-      config.plugins = config.plugins.concat([
-        new OptimizeJsPlugin({
-          sourceMap: false
-        }),
+      // Extracts imported CSS files into external stylesheet        
+      new ExtractTextPlugin('[name].css'),
 
-        // Extracts imported CSS files into external stylesheet        
-        new ExtractTextPlugin('[name].css'),
+      new CompressionPlugin({
+        asset: "[path].gz[query]",
+        algorithm: "gzip",
+        test: /\.js$/,
+        threshold: 10240,
+        minRatio: 0.8
+      }),
 
-        new CompressionPlugin({
-          asset: "[path].gz[query]",
-          algorithm: "gzip",
-          test: /\.js$/,
-          threshold: 10240,
-          minRatio: 0.8
-        })
-      ]);
-    }    
-
-    config.plugins = config.plugins.concat([
       // Description: Minimize all JavaScript output of chunks.
       // Loaders are switched into minimizing mode.
       // NOTE: To debug prod builds uncomment //debug lines and comment //prod lines
@@ -434,6 +392,12 @@ function makeWebpackConfig() {
         /src(\\|\/)debug(\\|\/)debug_renderer/,
         helpers.root('empty.js')
       ),
+    ]);
+  }
+
+  if (analyzeMode) {
+    config.plugins = config.plugins.concat([
+      new BundleAnalyzerPlugin()
     ]);
   }
 

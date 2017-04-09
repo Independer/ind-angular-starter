@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpCacheService } from 'shared';
 import 'rxjs/add/operator/toPromise';
+import { Http } from '@angular/http';
 
 @Component({
   selector: 'rest-test',
@@ -11,12 +11,13 @@ export class RestTestComponent implements OnInit {
   public users: User[];
 
   // Use "constructor"s only for dependency injection
-  constructor(private httpCache: HttpCacheService) { }
+  constructor(private http: Http) { }
 
   // Here you want to handle anything with @Input()'s @Output()'s
   // Data retrieval / etc - this is when the Component is "ready" and wired up
   async ngOnInit() {
-    this.users = await this.httpCache.get('/api/test/users').toPromise();
+    let response = await this.http.get('/api/test/users').toPromise();
+    this.users = response.json();
   }
 }
 

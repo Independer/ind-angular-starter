@@ -1,5 +1,5 @@
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { AppBrowserModule } from './app/app.browser.module';
+import { AppModule } from './app/app.module';
 import { decorateModuleRef } from 'shared';
 
 // Update this if you change your root component selector
@@ -28,7 +28,7 @@ if (hotModule) {
 }
 
 const bootApplication = () => {
-  return platform.bootstrapModule(AppBrowserModule)
+  return platform.bootstrapModule(AppModule)
     .then(decorateModuleRef)
     .catch(err => console.error(err));
 };

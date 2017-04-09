@@ -1,14 +1,4 @@
-@using IndAngularStarter.Server.Models
-@model IndexViewModel
-
-@if (Model.IsServerRenderingEnabled) {
-  <app asp-prerender-module="@Model.ServerRenderingModulePath">
-    Loading...
-  </app>
-}
-else {
-  <app>Loading...</app>
-}
+<app>Loading...</app>
 
 <environment names="Development">
   <script src="~/dll_dev/polyfills.dll.js" asp-append-version="true"></script>
@@ -16,5 +6,9 @@ else {
 </environment>
 
 <script src="~/dist/polyfills.bundle.js" asp-append-version="true"></script>
-<script src="~/dist/vendor.bundle.js" asp-append-version="true"></script>
+
+<environment names="Production">
+  <script src="~/dist/vendor.bundle.js" asp-append-version="true"></script>
+</environment>
+
 <script src="~/dist/main.bundle.js" asp-append-version="true"></script>
