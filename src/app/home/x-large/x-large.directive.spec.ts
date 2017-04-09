@@ -4,7 +4,7 @@ import {
   TestBed
 } from '@angular/core/testing';
 import { Component } from '@angular/core';
-import { By } from '@angular/platform-browser/src/dom/debug/by';
+import { By } from '@angular/platform-browser';
 
 // Load the implementations that should be tested
 import { XLargeDirective } from './x-large.directive';

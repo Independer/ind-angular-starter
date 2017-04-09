@@ -3,6 +3,7 @@ import 'rxjs/add/operator/toPromise';
 import { Http } from '@angular/http';
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'rest-test',
   templateUrl: './rest-test.component.html'
 })
