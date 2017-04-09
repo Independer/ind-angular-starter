@@ -1,50 +1,11 @@
 {
+  "extends": "./tsconfig",
   "compilerOptions": {
-    "target": "es5",
     "module": "es2015",
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": false,
-    "noEmit": true,
-    "noEmitHelpers": true,
-    "importHelpers": true,
-    "strictNullChecks": true,
-    "noImplicitAny": true,    
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "lib": [
-      "es2015",
-      "dom"
-    ],
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "types": [
-      "hammerjs",
-      "node"
-    ],
-    "baseUrl": ".",
-    "paths": {      
-      "shared": [ "./src/shared"]
-    }
+    "sourceMap": false
   },
-  "exclude": [
-    "node_modules",
-    "wwwroot",
-    "src/**/*.spec.ts",
-    "src/**/*.e2e.ts",
-    "src/**/*.aot.ts",
-    "src/**/**.aot.ts"
-  ],
   "angularCompilerOptions": {
-   "genDir": "./aot_temp",
-   "skipMetadataEmit": true
-  },
-  "compileOnSave": false,
-  "buildOnSave": false,
-  "atom": { "rewriteTsconfig": false }
+    "genDir": "./aot_temp",
+    "skipMetadataEmit": true
+  }
 }

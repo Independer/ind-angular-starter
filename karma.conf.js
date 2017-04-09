@@ -1,3 +1,7 @@
+const helpers = require('./helpers');
+
+const isCovarageEnabled = helpers.isTestCovarageEnabled(); 
+
 module.exports = function (config) {
   var testWebpackConfig = require('./webpack.test.js')({
     env: 'test'
@@ -19,7 +23,8 @@ module.exports = function (config) {
     exclude: [],
 
     client: {
-      captureConsole: false
+      captureConsole: false,
+      clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
 
     /*
@@ -30,42 +35,18 @@ module.exports = function (config) {
     files: [{
       pattern: './spec-bundle.js',
       watched: false
-    },
-    { 
-      pattern: './wwwroot/assets/**/*', 
-      watched: false, 
-      included: false, 
-      served: true, 
-      nocache: false 
     }],
-
-    /*
-     * By default all assets are served at http://localhost:[PORT]/base/
-     */
-    proxies: {
-      "/assets/": "/base/wwwroot/assets/"
-    },
 
     /*
      * preprocess matching files before serving them to the browser
      * available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
      */
     preprocessors: {
-      './spec-bundle.js': ['coverage', 'webpack', 'sourcemap']
+      './spec-bundle.js': isCovarageEnabled ? ['coverage', 'webpack', 'sourcemap'] : ['webpack', 'sourcemap']
     },
 
     // Webpack Config at ./webpack.test.js
     webpack: testWebpackConfig,
-
-    coverageReporter: {
-      type: 'in-memory'
-    },
-
-    remapCoverageReporter: {
-      'text-summary': null,
-      json: './wwwroot/coverage/coverage.json',
-      html: './wwwroot/coverage/html'
-    },
 
     // Webpack please don't spam the console when running in karma!
     webpackMiddleware: {
@@ -85,7 +66,7 @@ module.exports = function (config) {
      * possible values: 'dots', 'progress'
      * available reporters: https://npmjs.org/browse/keyword/karma-reporter
      */
-    reporters: ['mocha', 'coverage', 'remap-coverage'],
+    reporters: ['kjhtml', 'mocha'],
 
     // web server port
     port: 9876,
@@ -107,13 +88,13 @@ module.exports = function (config) {
      * available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
      */
     browsers: [
-      'Chrome'
+      'ChromeWithDebug'
     ],
 
     customLaunchers: {
-      ChromeTravisCi: {
+      ChromeWithDebug: {
         base: 'Chrome',
-        flags: ['--no-sandbox']
+        flags: ['--remote-debugging-port=9223']
       }
     },
 
@@ -121,8 +102,23 @@ module.exports = function (config) {
      * Continuous Integration mode
      * if true, Karma captures browsers, runs the tests and exits
      */
-    singleRun: true    
+    singleRun: true
   };
+  
+  if (isCovarageEnabled) {
+    configuration.reporters.push('coverage');
+    configuration.reporters.push('remap-coverage');
+
+    configuration.coverageReporter = {
+      type: 'in-memory'
+    };
+
+    configuration.remapCoverageReporter = {
+      'text-summary': null,
+      json: './wwwroot/coverage/coverage.json',
+      html: './wwwroot/coverage/html'
+    };
+  }
 
   config.set(configuration);
 };

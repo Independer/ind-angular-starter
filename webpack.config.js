@@ -23,6 +23,7 @@ const isDev = env === 'Production' ? false : true;
 const isAot = helpers.hasNpmFlag('aot');
 const distPath = 'dist';
 const tsConfigName = isDev ? 'tsconfig.json' : 'tsconfig.prod.json';
+const tsConfigWithPathAliases = 'tsconfig.json';
 const analyzeMode = false; // Set this flag to true to analyze what is included in the bundle using the BundleAnalyzerPlugin.
 
 const tsLintOptions = {
@@ -84,7 +85,7 @@ function makeWebpackConfig() {
     // An array of directory names to be resolved to the current directory
     modules: [helpers.root('src'), helpers.root('node_modules')],
 
-    alias: helpers.createTsConfigPathAliases(require('./' + tsConfigName))
+    alias: helpers.createTsConfigPathAliases(require('./' + tsConfigWithPathAliases))
   };
 
   config.module = {

@@ -10,30 +10,24 @@
     "noEmit": true,
     "noEmitHelpers": true,
     "importHelpers": true,
-    "strictNullChecks": true,    
-    "noImplicitAny": true,    
+    "strictNullChecks": true,
+    "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "lib": [
-      "dom",
-      "es6"
+      "es2015",
+      "dom"
     ],
     "typeRoots": [
       "node_modules/@types"
     ],
-    "types": [
-      "hammerjs",
-      "jasmine",
-      "node",      
-      "source-map",
-      "uglify-js",
-      "webpack"
-    ],
     "baseUrl": ".",
-    "paths": {      
-      "shared": [ "./src/shared"]
+    "paths": {
+      "shared": [
+        "./src/shared"
+      ]
     }
   },
   "exclude": [
@@ -42,11 +36,6 @@
     "src/**/*.aot.ts",
     "src/**/**.aot.ts"
   ],
-  "angularCompilerOptions": {
-   "genDir": "./aot_temp",
-   "skipMetadataEmit": true
-  },
   "compileOnSave": false,
-  "buildOnSave": false,
-  "atom": { "rewriteTsconfig": false }
+  "buildOnSave": false
 }

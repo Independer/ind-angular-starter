@@ -29,7 +29,19 @@ function createTsConfigPathAliases(tsConfig) {
   return alias;
 }
 
+function isTestWatch() {
+  return process.env.npm_lifecycle_script.indexOf('--auto-watch') !== -1;
+}
+
+function isTestCovarageEnabled() {
+  // skip coverage in watch mode
+  // See http://stackoverflow.com/questions/39131809/karma-webpack-sourcemaps-not-working
+  return !isTestWatch(); 
+}
+
 exports.hasProcessFlag = hasProcessFlag;
 exports.hasNpmFlag = hasNpmFlag;
 exports.root = root;
 exports.createTsConfigPathAliases = createTsConfigPathAliases;
+exports.isTestWatch = isTestWatch;
+exports.isTestCovarageEnabled = isTestCovarageEnabled;

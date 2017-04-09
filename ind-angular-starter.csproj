@@ -8,6 +8,7 @@
     <OutputType>Exe</OutputType>
     <PackageId>ind-angular-starter</PackageId>
     <UserSecretsId>aspnet-WebApplication-0799fe3e-6eaf-4c5f-b40e-7c6bfd5dfa9a</UserSecretsId>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
     <Npm>"C:\Program Files\nodejs\npm"</Npm>
     <ReplaceContentWithNonePattern>wwwroot/**;appsettings*.*;*.json</ReplaceContentWithNonePattern>
