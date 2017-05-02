@@ -32,12 +32,7 @@
      * Disallow redeclaring a variable within the same block scope more than once.
      * Note that this is only useful as long as we don't have no-var-keyword set to true.
      */
-    "no-duplicate-variable": true,
-    /**
-     * Disallow usage of variables before their declaration.
-     * Note that this is only useful as long as we don't have no-var-keyword set to true.
-     */
-    "no-use-before-declare": true,
+    "no-duplicate-variable": true,    
     /**
      * Require single quotation marks for strings, unless using double quotation marks
      * avoid the need for escaping (e.g. "Hello 'World'" would be allowed).
@@ -268,12 +263,7 @@
      * Disallows unused expression statements.
      * Unused expressions are expression statements which are not assignments or function calls (and thus usually no-ops).
      */
-    "no-unused-expression": true,
-    /**
-     * Disallow new-ing an object, without using that object later, because this indicates the constructor
-     * is invoked solely for its side effects.
-     */
-    "no-unused-new": true,
+    "no-unused-expression": true,    
     /**
      * Requires expressions of type void to appear in statement position.
      * 
