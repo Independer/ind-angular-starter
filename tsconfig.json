@@ -21,11 +21,11 @@
     "typeRoots": [
       "node_modules/@types"
     ],
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "shared": [
-        "./src/shared"
-      ]
+      "shared/*": [ "this-folder-does-not-exist/*" ],
+      "app/*": [ "this-folder-does-not-exist/*" ],
+      "shared": [ "shared" ]
     }
   },
   "exclude": [

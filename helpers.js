@@ -19,11 +19,19 @@ function root(args) {
 
 function createTsConfigPathAliases(tsConfig) {
   var alias = {};
+  var baseUrl = tsConfig.compilerOptions.baseUrl;
   var tsPaths = tsConfig.compilerOptions.paths;
   for (var prop in tsPaths) {
-    alias[prop] = root(tsPaths[prop][0]);
+    let relativePath = tsPaths[prop][0];
+    const wildcardEnding = '/*';
 
-    console.log('ALIAS: ' + prop + '=' + alias[prop]);
+    // Trim wildcards (we don't need them for webpack aliases - it works as wildcard by default)
+    if (prop.endsWith(wildcardEnding) && relativePath.endsWith(wildcardEnding)) {
+      prop = prop.substring(0, prop.length - wildcardEnding.length);
+      relativePath = relativePath.substring(0, relativePath.length - wildcardEnding.length);      
+    }
+    
+    alias[prop] = root(baseUrl, relativePath);
   }
 
   return alias;

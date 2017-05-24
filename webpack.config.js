@@ -13,7 +13,6 @@ const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const ngcWebpack = require('ngc-webpack');
 const CompressionPlugin = require('compression-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const OptimizeJsPlugin = require('optimize-js-plugin');
 const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
@@ -191,10 +190,6 @@ function makeWebpackConfig() {
         // your Angular Async Route paths relative to this root directory
       }
     ),
-
-    new TsConfigPathsPlugin({
-      tsconfig: tsConfigName
-    }),
 
     // Experimental. See: https://gist.github.com/sokra/27b24881210b56bbaff7
     new LoaderOptionsPlugin({
