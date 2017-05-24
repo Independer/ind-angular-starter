@@ -16,38 +16,56 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const OptimizeJsPlugin = require('optimize-js-plugin');
 const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
+const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 
-const env = helpers.hasNpmFlag('prod') ? 'Production' : (process.env.ASPNETCORE_ENVIRONMENT || 'Development');
-const isDev = env === 'Production' ? false : true;  
-const isAot = helpers.hasNpmFlag('aot');
-const distPath = 'dist';
-const tsConfigName = isDev ? 'tsconfig.json' : 'tsconfig.prod.json';
-const tsConfigWithPathAliases = 'tsconfig.json';
-const analyzeMode = false; // Set this flag to true to analyze what is included in the bundle using the BundleAnalyzerPlugin.
-
-const tsLintOptions = {
-  // tslint errors are displayed by default as warnings 
-  // set emitErrors to true to display them as errors 
-  emitErrors: true,
-
-  // tslint does not interrupt the compilation by default 
-  // if you want any file with tslint errors to fail 
-  // set failOnHint to true 
-  failOnHint: false
+const stats = {
+  assets: true,
+  cached: false,
+  cachedAssets: false,
+  children: false,
+  chunks: true,
+  chunkModules: false,
+  chunkOrigins: false,
+  colors: true,
+  depth: false,
+  entrypoints: false,
+  errors: true,
+  errorDetails: true,
+  hash: false,
+  maxModules: 0,
+  modules: false,
+  performance: true,
+  providedExports: false,
+  publicPath: false,
+  reasons: true,
+  source: false,
+  timings: true,
+  usedExports: true,
+  version: true,
+  warnings: true
 };
 
-function makeWebpackConfig() {  
+module.exports = function (args = {}) {
+  const env = args.PROD ? 'Production' : (process.env.ASPNETCORE_ENVIRONMENT || 'Development');  
+  const isDev = env === 'Production' ? false : true;
+  const isProd = !isDev;
+  const isAot = !!args.AOT;  
+  const distPath = 'dist';
+  const tsConfigName = isDev ? 'tsconfig.json' : 'tsconfig.prod.json';
+  const tsConfigWithPathAliases = 'tsconfig.json';
+  const analyzeMode = args.ANALYZE;
+  
   if (analyzeMode) {
     console.log('Running Webpack build in Analyze mode. A web browser window with statistics will be opened after the build completes sucessfully.');
   }  
 
-  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-  console.log(env.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT'));
-  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-
+  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ' + env.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT') + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+  
   var config = {};
 
   config.target = 'web';
+  config.stats = stats;
+  config.bail = !isDev;  
 
   if (isDev) {
     config.devtool = 'cheap-module-source-map'; 
@@ -90,12 +108,6 @@ function makeWebpackConfig() {
   config.module = {
 
     rules: [
-      {
-        enforce: 'pre',
-        test: /\.ts$/,
-        use: 'tslint-loader',
-        exclude: /(node_modules)/,
-      },
 
       // Typescript loader support for .ts and Angular 2 async routes via .async.ts
       // Replace templateUrl and stylesUrl with require()
@@ -173,6 +185,8 @@ function makeWebpackConfig() {
       verbose: false
     }),
 
+    new ProgressPlugin(),
+
     // NOTE: when adding more properties make sure you include them in custom-typings.d.ts
     new DefinePlugin({
       'ENV': JSON.stringify(env),
@@ -193,32 +207,9 @@ function makeWebpackConfig() {
 
     // Experimental. See: https://gist.github.com/sokra/27b24881210b56bbaff7
     new LoaderOptionsPlugin({
-      options: {
-        tslint: tsLintOptions
-      }
+      minimize: !isDev,
+      debug: isDev
     }),
-
-    // Fix Angular 2
-    new NormalModuleReplacementPlugin(
-      /facade(\\|\/)async/,
-      helpers.root('node_modules/@angular/core/src/facade/async.js')
-    ),
-    new NormalModuleReplacementPlugin(
-      /facade(\\|\/)collection/,
-      helpers.root('node_modules/@angular/core/src/facade/collection.js')
-    ),
-    new NormalModuleReplacementPlugin(
-      /facade(\\|\/)errors/,
-      helpers.root('node_modules/@angular/core/src/facade/errors.js')
-    ),
-    new NormalModuleReplacementPlugin(
-      /facade(\\|\/)lang/,
-      helpers.root('node_modules/@angular/core/src/facade/lang.js')
-    ),
-    new NormalModuleReplacementPlugin(
-      /facade(\\|\/)math/,
-      helpers.root('node_modules/@angular/core/src/facade/math.js')
-    ),
 
     new ngcWebpack.NgcWebpackPlugin({
       disabled: !isAot,
@@ -231,14 +222,6 @@ function makeWebpackConfig() {
     var dllConfig = require('./webpack.dev.dll.js');
 
     config.plugins = config.plugins.concat([
-      // Eperimental. See: https://gist.github.com/sokra/27b24881210b56bbaff7
-      new LoaderOptionsPlugin({
-        debug: true,
-        options: {
-          tslint: tsLintOptions
-        }
-      }),
-
       new DllBundlesPlugin({
         bundles: dllConfig.bundles,
         dllDir: helpers.root('wwwroot', 'dll_dev'),
@@ -322,38 +305,10 @@ function makeWebpackConfig() {
         },
       }),
 
-      // Replace resources that matches resourceRegExp with newResource
-      new NormalModuleReplacementPlugin(
-        /angular2-hmr/,
-        helpers.root('empty.js')
-      ),
-
       new NormalModuleReplacementPlugin(
         /zone\.js(\\|\/)dist(\\|\/)long-stack-trace-zone/,
         helpers.root('empty.js')
-      ),
-
-      // Experimental. See: https://gist.github.com/sokra/27b24881210b56bbaff7
-      new LoaderOptionsPlugin({
-        minimize: true,
-        debug: false,
-        options: {
-          tslint: tsLintOptions,
-          // TODO: Need to workaround Angular 2's html syntax => #id [bind] (event) *ngFor
-          htmlLoader: {
-            minimize: true,
-            removeAttributeQuotes: false,
-            caseSensitive: true,
-            customAttrSurround: [
-              [/#/, /(?:)/],
-              [/\*/, /(?:)/],
-              [/\[?\(?/, /(?:)/]
-            ],
-            customAttrAssign: [/\)?\]?=/]
-          },
-
-        }
-      })      
+      )   
     ]);
   }
 
@@ -410,6 +365,4 @@ function makeWebpackConfig() {
   };
 
   return config;
-}
-
-module.exports = makeWebpackConfig();
+};
