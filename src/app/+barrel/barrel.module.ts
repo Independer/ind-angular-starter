@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 
 import { routes } from './barrel.routes';
 import { BarrelComponent } from './barrel.component';
+import { SharedComponentModule } from 'shared';
 
 console.log('`Barrel` bundle loaded asynchronously');
 
@@ -16,7 +17,8 @@ console.log('`Barrel` bundle loaded asynchronously');
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    SharedComponentModule
   ]
 })
 export class BarrelModule {
