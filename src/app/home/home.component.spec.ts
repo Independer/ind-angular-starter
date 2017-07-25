@@ -13,7 +13,7 @@ import { MockBackend } from '@angular/http/testing';
 
 // Load the implementations that should be tested
 import { HomeComponent } from './home.component';
-import { Title } from './title';
+import { Title } from './title/title.service';
 
 describe(`Home`, () => {
   let comp: HomeComponent;

@@ -2,7 +2,7 @@ import {
   Component,
   OnInit
 } from '@angular/core';
-import { Title } from './title';
+import { Title } from './title/title.service';
 
 @Component({
   // The selector is what angular internally uses
@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
   // Set our default values
   public localState = { value: '' };
   // TypeScript public modifiers
-  constructor(    
+  constructor(
     public title: Title
   ) {}
 

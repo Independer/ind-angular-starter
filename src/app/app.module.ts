@@ -4,10 +4,10 @@ import { HttpModule } from '@angular/http';
 import { CommonModule } from '@angular/common';
 import { RouterModule, PreloadAllModules } from '@angular/router';
 import { ROUTES } from './app.routes';
-import { HomeComponent } from './home';
-import { AboutComponent } from './about';
-import { NoContentComponent } from './no-content';
-import { XLargeDirective } from './home/x-large';
+import { HomeComponent } from './home/home.component';
+import { AboutComponent } from './about/about.component';
+import { NoContentComponent } from './no-content/no-content.component';
+import { XLargeDirective } from './home/x-large/x-large.directive';
 import { AppComponent } from './app.component';
 import { ENV_PROVIDERS } from 'shared';
 
@@ -16,7 +16,7 @@ import { ENV_PROVIDERS } from 'shared';
   imports: [
     CommonModule,
     BrowserModule,
-    HttpModule,    
+    HttpModule,
     RouterModule.forRoot(ROUTES, { preloadingStrategy: PreloadAllModules })
   ],
   declarations: [

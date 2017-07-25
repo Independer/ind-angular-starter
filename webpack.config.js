@@ -17,13 +17,15 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const OptimizeJsPlugin = require('optimize-js-plugin');
 const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
+const { NamedLazyChunksWebpackPlugin } = require('./webpack.plugins');
 
 const stats = {
   assets: true,
   cached: false,
   cachedAssets: false,
   children: false,
-  chunks: true,
+  chunks: false,
   chunkModules: false,
   chunkOrigins: false,
   colors: true,
@@ -46,29 +48,29 @@ const stats = {
 };
 
 module.exports = function (args = {}) {
-  const env = args.PROD ? 'Production' : (process.env.ASPNETCORE_ENVIRONMENT || 'Development');  
+  const env = args.PROD ? 'Production' : (process.env.ASPNETCORE_ENVIRONMENT || 'Development');
   const isDev = env === 'Production' ? false : true;
   const isProd = !isDev;
-  const isAot = !!args.AOT;  
+  const isAot = !!args.AOT;
   const distPath = 'dist';
   const tsConfigName = isDev ? 'tsconfig.json' : 'tsconfig.prod.json';
   const tsConfigWithPathAliases = 'tsconfig.json';
   const analyzeMode = args.ANALYZE;
-  
+
   if (analyzeMode) {
     console.log('Running Webpack build in Analyze mode. A web browser window with statistics will be opened after the build completes sucessfully.');
-  }  
+  }
 
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ' + env.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT') + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-  
+
   var config = {};
 
   config.target = 'web';
   config.stats = stats;
-  config.bail = !isDev;  
+  config.bail = !isDev;
 
   if (isDev) {
-    config.devtool = 'cheap-module-source-map'; 
+    config.devtool = 'cheap-module-source-map';
   }
 
   // Cache generated modules and chunks to improve performance for multiple incremental builds.
@@ -85,10 +87,10 @@ module.exports = function (args = {}) {
     path: helpers.root('wwwroot', distPath)
   };
 
-  config.output.filename = '[name].bundle.js';    
-  config.output.chunkFilename = '[id].[chunkhash].chunk.js';
+  config.output.filename = '[name].js';
+  config.output.chunkFilename = '[name].[chunkhash].chunk.js';
   config.output.publicPath = '/dist/';
-  
+
   if (isDev) {
     config.output.library = 'ac_[name]';
     config.output.libraryTarget = 'var';
@@ -180,7 +182,7 @@ module.exports = function (args = {}) {
 
   };
 
-  config.plugins = [   
+  config.plugins = [
     new CleanWebpackPlugin([helpers.root('wwwroot', distPath), helpers.root('aot_temp')], {
       verbose: false
     }),
@@ -215,21 +217,30 @@ module.exports = function (args = {}) {
       disabled: !isAot,
       tsConfig: helpers.root(tsConfigName),
       resourceOverride: helpers.root('aot-empty-resource.js')
-    })    
-  ];  
-  
+    }),
+
+    new NamedLazyChunksWebpackPlugin()
+  ];
+
   if (isDev) {
     var dllConfig = require('./webpack.dev.dll.js');
 
     config.plugins = config.plugins.concat([
+      new CircularDependencyPlugin({
+        // exclude detection of files based on a RegExp
+        exclude: /a\.js|node_modules/,
+        // add errors to webpack instead of warnings
+        failOnError: true
+      }),
+
       new DllBundlesPlugin({
         bundles: dllConfig.bundles,
         dllDir: helpers.root('wwwroot', 'dll_dev'),
         webpackConfig: dllConfig.webpackConfig
       })
     ]);
-  } 
-  
+  }
+
   if (!isDev) {
     config.plugins = config.plugins.concat([
       // Shares common code between the pages.It identifies common modules and put them into a commons chunk.
@@ -244,16 +255,12 @@ module.exports = function (args = {}) {
         chunks: ['main'],
         minChunks: module => /node_modules/.test(module.resource)
       }),
-      // Specify the correct order the scripts will be injected in
-      new CommonsChunkPlugin({
-        name: ['polyfills', 'vendor'].reverse()
-      }),
 
       new OptimizeJsPlugin({
         sourceMap: false
       }),
 
-      // Extracts imported CSS files into external stylesheet        
+      // Extracts imported CSS files into external stylesheet
       new ExtractTextPlugin('[name].css'),
 
       new CompressionPlugin({
@@ -308,7 +315,7 @@ module.exports = function (args = {}) {
       new NormalModuleReplacementPlugin(
         /zone\.js(\\|\/)dist(\\|\/)long-stack-trace-zone/,
         helpers.root('empty.js')
-      )   
+      )
     ]);
   }
 
