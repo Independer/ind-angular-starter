@@ -354,7 +354,15 @@ module.exports = function (args = {}) {
 
   if (analyzeMode) {
     config.plugins = config.plugins.concat([
-      new BundleAnalyzerPlugin()
+      new BundleAnalyzerPlugin({
+        analyzerMode: 'static',
+        reportFilename: 'report.html',
+        openAnalyzer: false,
+        generateStatsFile: true,
+        statsFilename: 'stats.json',
+        statsOptions: null,
+        logLevel: 'info'
+      })
     ]);
   }
 
