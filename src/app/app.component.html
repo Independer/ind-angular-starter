@@ -1,6 +1,5 @@
 <nav>
-  <a [routerLink]=" ['./'] " routerLinkActive="active">Index</a>
-  <a [routerLink]=" ['./home'] " routerLinkActive="active">Home</a>
+  <a [routerLink]=" ['./'] " routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
   <a [routerLink]=" ['./detail'] " routerLinkActive="active">Detail</a>
   <a [routerLink]=" ['./barrel'] " routerLinkActive="active">Barrel</a>
   <a [routerLink]=" ['./rest-test'] " routerLinkActive="active">REST Test</a>

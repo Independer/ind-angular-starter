@@ -2,9 +2,7 @@
 
 <p>Let's get some fake users from Rest:</p>
 
-<p *ngIf="!users"><em>Loading...</em></p>
-
-<table class="table" *ngIf="users">
+<table class="table" *ngIf="usersAsync | async; let users; else noUsers">
   <thead>
     <tr>
       <th>User ID</th>
@@ -18,3 +16,7 @@
     </tr>
   </tbody>
 </table>
+
+<ng-template #noUsers>
+  <p><em>Loading...</em></p>
+</ng-template>

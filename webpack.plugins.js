@@ -8,19 +8,18 @@ const ImportDependency = require('webpack/lib/dependencies/ImportDependency');
 class NamedLazyChunksWebpackPlugin extends webpack.NamedChunksPlugin {
   constructor() {
     // Append a dot and number if the name already exists.
-    const nameMap = new Map();
 
-    function getUniqueName(baseName) {
+    let getUniqueName = (baseName) => {
       let name = baseName;
       let num = 0;
-      while (nameMap.has(name)) {
+      while (this.nameMap.has(name)) {
         name = `${baseName}.${num++}`;
       }
-      nameMap.set(name, true);
+      this.nameMap.set(name, true);
       return name;
     }
 
-    function createChunkNameFromModuleFilePath(filePath) {
+    let createChunkNameFromModuleFilePath = (filePath) => {
       let moduleName = basename(filePath).replace(/(\.ngfactory)?(\.(js|ts))?$/, '').replace(/\.module$/, '');
 
       if (!moduleName || moduleName === '') {
@@ -56,6 +55,16 @@ class NamedLazyChunksWebpackPlugin extends webpack.NamedChunksPlugin {
     };
 
     super(nameResolver);
+
+    this.nameMap = new Map();
+  }
+
+  apply(compiler) {
+    super.apply(compiler);
+
+    compiler.plugin("done", (stats) => {
+		  this.nameMap.clear();
+		});
   }
 }
 

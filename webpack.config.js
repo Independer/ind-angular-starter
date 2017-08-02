@@ -51,8 +51,9 @@ module.exports = function (args = {}) {
   const env = args.PROD ? 'Production' : (process.env.ASPNETCORE_ENVIRONMENT || 'Development');
   const isDev = env === 'Production' ? false : true;
   const isProd = !isDev;
+  const isServer = !!args.SERVER;
   const isAot = !!args.AOT;
-  const distPath = 'dist';
+  const distPath =  isServer ? 'serverdist' : 'dist';
   const tsConfigName = isDev ? 'tsconfig.json' : 'tsconfig.prod.json';
   const tsConfigWithPathAliases = 'tsconfig.json';
   const analyzeMode = args.ANALYZE;
@@ -61,16 +62,21 @@ module.exports = function (args = {}) {
     console.log('Running Webpack build in Analyze mode. A web browser window with statistics will be opened after the build completes sucessfully.');
   }
 
-  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ' + env.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT') + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+  console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ' + (isServer ? 'SERVER' : 'BROWSER') + ' | ' + env.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT') + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
 
   var config = {};
 
-  config.target = 'web';
+  config.target = isServer ? 'node' : 'web';
   config.stats = stats;
   config.bail = !isDev;
 
   if (isDev) {
-    config.devtool = 'cheap-module-source-map';
+    if (isServer) {
+      config.devtool = 'inline-source-map';
+    }
+    else {
+      config.devtool = 'cheap-module-source-map';
+    }
   }
 
   // Cache generated modules and chunks to improve performance for multiple incremental builds.
@@ -80,8 +86,14 @@ module.exports = function (args = {}) {
 
   config.entry = {};
 
-  config.entry['polyfills'] = './src/polyfills.ts';
-  config.entry['main'] = isAot ? './src/main.aot.ts' : './src/main.ts';
+  if (isServer) {
+    config.entry['main'] = isAot ? './src/main.server.aot.ts' : './src/main.server.ts';
+  }
+  else {
+    config.entry['polyfills'] = './src/polyfills.browser.ts';
+    config.entry['main'] = isAot ? './src/main.browser.aot.ts' : './src/main.browser.ts';
+    config.entry['styles'] = './src/styles/app.scss';
+  }
 
   config.output = {
     path: helpers.root('wwwroot', distPath)
@@ -91,7 +103,10 @@ module.exports = function (args = {}) {
   config.output.chunkFilename = '[name].[chunkhash].chunk.js';
   config.output.publicPath = '/dist/';
 
-  if (isDev) {
+  if (isServer) {
+    config.output.libraryTarget = 'commonjs';
+  }
+  else if (isDev) {
     config.output.library = 'ac_[name]';
     config.output.libraryTarget = 'var';
   }
@@ -151,7 +166,7 @@ module.exports = function (args = {}) {
       // Returns file content as string
       {
         test: /\.css$/,
-        loader: isDev ? 'style-loader!css-loader' : ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' }),
+        loader: isServer ? 'to-string-loader!css-loader' : ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' }),
         include: [helpers.root('src', 'styles')]
       },
 
@@ -159,7 +174,7 @@ module.exports = function (args = {}) {
       // Returns compiled css content as string
       {
         test: /\.scss$/,
-        loader: isDev ? 'style-loader!css-loader!sass-loader' : ExtractTextPlugin.extract({
+        loader: isServer ? 'to-string-loader!css-loader!sass-loader' : ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: 'css-loader!sass-loader'
         }),
@@ -219,10 +234,34 @@ module.exports = function (args = {}) {
       resourceOverride: helpers.root('aot-empty-resource.js')
     }),
 
-    new NamedLazyChunksWebpackPlugin()
+    new NamedLazyChunksWebpackPlugin(),
+
+    // Extracts imported CSS files into external stylesheet
+    new ExtractTextPlugin('[name].css')
   ];
 
-  if (isDev) {
+  if (!isServer) {
+    config.plugins = config.plugins.concat([
+      // Shares common code between the pages.It identifies common modules and put them into a commons chunk.
+      // See: https://github.com/webpack/docs/wiki/optimization#multi-page-app
+      new CommonsChunkPlugin({
+        name: 'polyfills',
+        chunks: ['polyfills']
+      }),
+      // This enables tree shaking of the vendor modules
+      new CommonsChunkPlugin({
+        name: 'vendor',
+        chunks: ['main'],
+        minChunks: module => /node_modules/.test(module.resource)
+      }),
+      new CommonsChunkPlugin({
+        name: 'manifest',
+        minChunks: Infinity
+      })
+    ]);
+  }
+
+  if (isDev && !isServer) {
     var dllConfig = require('./webpack.dev.dll.js');
 
     config.plugins = config.plugins.concat([
@@ -243,32 +282,8 @@ module.exports = function (args = {}) {
 
   if (!isDev) {
     config.plugins = config.plugins.concat([
-      // Shares common code between the pages.It identifies common modules and put them into a commons chunk.
-      // See: https://github.com/webpack/docs/wiki/optimization#multi-page-app
-      new CommonsChunkPlugin({
-        name: 'polyfills',
-        chunks: ['polyfills']
-      }),
-      // This enables tree shaking of the vendor modules
-      new CommonsChunkPlugin({
-        name: 'vendor',
-        chunks: ['main'],
-        minChunks: module => /node_modules/.test(module.resource)
-      }),
-
       new OptimizeJsPlugin({
         sourceMap: false
-      }),
-
-      // Extracts imported CSS files into external stylesheet
-      new ExtractTextPlugin('[name].css'),
-
-      new CompressionPlugin({
-        asset: "[path].gz[query]",
-        algorithm: "gzip",
-        test: /\.js$/,
-        threshold: 10240,
-        minRatio: 0.8
       }),
 
       // Description: Minimize all JavaScript output of chunks.
@@ -319,7 +334,19 @@ module.exports = function (args = {}) {
     ]);
   }
 
-  if (isAot) {
+  if (!isDev && !isServer) {
+    config.plugins = config.plugins.concat([
+      new CompressionPlugin({
+        asset: "[path].gz[query]",
+        algorithm: "gzip",
+        test: /\.js$/,
+        threshold: 10240,
+        minRatio: 0.8
+      })
+    ]);
+  }
+
+  if (isAot && !isServer) {
     config.plugins = config.plugins.concat([
       new NormalModuleReplacementPlugin(
         /@angular(\\|\/)upgrade/,

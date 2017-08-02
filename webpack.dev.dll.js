@@ -99,7 +99,8 @@ var bundles = {
       path: '@angular/animations/@angular/animations/browser.es5.js'
     },
     'rxjs',
-    'tslib'
+    'tslib',
+    '@ngx-meta/core'
   ]
 };
 

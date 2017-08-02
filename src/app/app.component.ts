@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import '../styles/app.scss';
-
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'app',

@@ -10,7 +10,7 @@
     "noEmit": true,
     "noEmitHelpers": true,
     "importHelpers": true,
-    "noImplicitReturns": true,    
+    "noImplicitReturns": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "strict": true,
@@ -32,7 +32,8 @@
     "node_modules",
     "wwwroot",
     "src/**/*.aot.ts",
-    "src/**/**.aot.ts"
+    "src/**/**.aot.ts",
+    "src/temporary-aspnetcore-engine.ts"
   ],
   "compileOnSave": false,
   "buildOnSave": false

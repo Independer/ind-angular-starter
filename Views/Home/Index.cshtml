@@ -1,14 +1,14 @@
-<app>Loading...</app>
+﻿@model IndAngularStarter.Server.Models.SpaModel
 
-<environment names="Development">
-  <script src="~/dll_dev/polyfills.dll.js" asp-append-version="true"></script>
-  <script src="~/dll_dev/vendor.dll.js" asp-append-version="true"></script>
-</environment>
+@if (Model.SsrResult != null) {
+  @Html.Raw(Model.SsrResult.Html)
+}
+else {
+  <app>Loading...</app>
+}
 
-<script src="~/dist/polyfills.js" asp-append-version="true"></script>
+@section scripts {
+  <script src="~/dist/main.js" asp-append-version="true"></script>
+}
 
-<environment names="Production">
-  <script src="~/dist/vendor.js" asp-append-version="true"></script>
-</environment>
 
-<script src="~/dist/main.js" asp-append-version="true"></script>

@@ -1,18 +1,40 @@
-﻿<!DOCTYPE html>
+﻿@model IndAngularStarter.Server.Models.SpaModel
+
+<!DOCTYPE html>
 <html>
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Independer Angular Starter</title>
-    <base href="/" />
-    <environment names="Staging,Production">
-        <link rel="stylesheet" href="~/dist/main.css" asp-append-version="true" />
-    </environment>
+  <base href="/" />
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="stylesheet" href="~/dist/styles.css" asp-append-version="true" />
+
+  @if (Model.SsrResult != null) {
+    <title>@Model.SsrResult.Title</title>
+
+    @Html.Raw(Model.SsrResult.Meta)
+    @Html.Raw(Model.SsrResult.Links)
+
+    @Html.Raw(Model.SsrResult.Styles)
+  }
 </head>
 
 <body>
-    @RenderBody()
+  @RenderBody()
+
+  <script src="~/dist/manifest.js" asp-append-version="true"></script>
+
+  <environment names="Development">
+    <script src="~/dll_dev/polyfills.dll.js" asp-append-version="true"></script>
+    <script src="~/dll_dev/vendor.dll.js" asp-append-version="true"></script>
+  </environment>
+
+  <script src="~/dist/polyfills.js" asp-append-version="true"></script>
+
+  <script src="~/dist/vendor.js" asp-append-version="true"></script>
+
+  @RenderSection("scripts", required: false)
 </body>
 
 </html>

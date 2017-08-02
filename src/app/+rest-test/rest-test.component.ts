@@ -1,24 +1,36 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/map';
 import { Http } from '@angular/http';
+import { SsrState, ORIGIN_URL } from 'shared';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'rest-test',
   templateUrl: './rest-test.component.html'
 })
-export class RestTestComponent implements OnInit {
+export class RestTestComponent {
 
-  public users: User[];
+  public usersAsync: Promise<User[]>;
 
   // Use "constructor"s only for dependency injection
-  constructor(private http: Http) { }
+  constructor(private http: Http, @Inject(ORIGIN_URL) private baseUrl: string, private ssrState: SsrState) {
+    this.usersAsync = this.getUsers();
+  }
 
-  // Here you want to handle anything with @Input()'s @Output()'s
-  // Data retrieval / etc - this is when the Component is "ready" and wired up
-  async ngOnInit() {
-    let response = await this.http.get('/api/test/users').toPromise();
-    this.users = response.json();
+  private getUsers() {
+    let cachedUsers = this.ssrState.get('Users') as User[];
+
+    if (cachedUsers) {
+      console.log('Returning users from cache.');
+      return Promise.resolve(cachedUsers);
+    }
+    else {
+      return this.http.get(`${this.baseUrl}/api/test/users`).map(r => r.json() as User[]).toPromise().then(users => {
+        this.ssrState.set('Users', users);
+        return users;
+      });
+    }
   }
 }
 

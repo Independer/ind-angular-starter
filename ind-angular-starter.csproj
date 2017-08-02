@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
@@ -20,7 +20,7 @@
 
     <!-- Exclude all content that is included by default by the SDK from publish and add only what we need later (see "PublishFilesPattern" property above and "PreparePublish" target below) -->
     <Content Remove="$(ReplaceContentWithNonePattern)" />
-    <None Include="$(ReplaceContentWithNonePattern)" />   
+    <None Include="$(ReplaceContentWithNonePattern)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,7 +28,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.AngularServices" Version="1.1.0-beta-000002" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.1" />
@@ -49,6 +49,7 @@
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec Command="$(Npm) install" />
     <Exec Command="$(Npm) run build:prod" />
+    <Exec Command="$(Npm) run build:server:prod" />
 
     <!-- Add the content that we want to publish (with newly-built files) to the publish output -->
     <!-- Note that we cannot include those files as part of the "Content" item outside of this target
