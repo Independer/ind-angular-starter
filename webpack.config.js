@@ -1,6 +1,7 @@
 // Based on angular2-webpack-starter: https://github.com/AngularClass/angular2-webpack-starter/tree/1349411df7ced79f2e8486ce7f4aae6ab5e083e0
 
 const webpack = require('webpack');
+const os = require('os');
 const helpers = require('./helpers');
 const NormalModuleReplacementPlugin = require('webpack/lib/NormalModuleReplacementPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
@@ -19,6 +20,8 @@ const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const { NamedLazyChunksWebpackPlugin } = require('./webpack.plugins');
+const HappyPack = require('happypack');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const stats = {
   assets: true,
@@ -57,12 +60,14 @@ module.exports = function (args = {}) {
   const tsConfigName = isDev ? 'tsconfig.json' : 'tsconfig.prod.json';
   const tsConfigWithPathAliases = 'tsconfig.json';
   const analyzeMode = args.ANALYZE;
+  const cpuCount = os.cpus().length;
 
   if (analyzeMode) {
     console.log('Running Webpack build in Analyze mode. A web browser window with statistics will be opened after the build completes sucessfully.');
   }
 
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ' + (isServer ? 'SERVER' : 'BROWSER') + ' | ' + env.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT') + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+  console.log('CPU Count: ' + cpuCount);
 
   var config = {};
 
@@ -130,19 +135,7 @@ module.exports = function (args = {}) {
       // Replace templateUrl and stylesUrl with require()
       {
         test: /\.ts$/,
-        use: [
-          {
-            loader: 'ng-router-loader',
-            options: {
-              loader: 'async-import',
-              genDir: 'aot_temp',
-              aot: isAot,
-              debug: false
-            }
-          },
-          'awesome-typescript-loader?{configFileName: "' + tsConfigName + '"}',
-          'angular2-template-loader'
-        ],
+        use: 'happypack/loader?id=ts',
         exclude: [/\.(spec|e2e)\.ts$/]
       },
 
@@ -203,6 +196,37 @@ module.exports = function (args = {}) {
     }),
 
     new ProgressPlugin(),
+
+    new HappyPack({
+      id: 'ts',
+      threads: cpuCount - 1, // there should be 1 cpu for the fork-ts-checker-webpack-plugin
+      loaders: [
+        {
+          path: 'ng-router-loader',
+          query: {
+            loader: 'async-import',
+            genDir: 'aot_temp',
+            aot: isAot,
+            debug: false
+          }
+        },
+        {
+          path: 'ts-loader',
+          query: {
+            configFile: tsConfigName,
+            happyPackMode: true
+          }
+        },
+        {
+          path: 'angular2-template-loader'
+        }
+      ],
+    }),
+
+    new ForkTsCheckerWebpackPlugin({
+      checkSyntacticErrors: true,
+      watch: ['./src']
+    }),
 
     // NOTE: when adding more properties make sure you include them in custom-typings.d.ts
     new DefinePlugin({
@@ -304,7 +328,10 @@ module.exports = function (args = {}) {
         // }, // debug
         // comments: true, //debug
 
-
+        parallel: {
+          cache: true,
+          workers: cpuCount
+        },
         beautify: false, //prod
         output: {
           comments: false

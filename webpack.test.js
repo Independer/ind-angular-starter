@@ -6,6 +6,7 @@ const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
 
@@ -35,7 +36,7 @@ module.exports = function (options) {
           {
             test: /\.ts$/,
             loaders: [
-              'awesome-typescript-loader',
+              { loader: 'ts-loader', options: { transpileOnly: true } },
               'angular2-template-loader'
             ],
             exclude: [/\.e2e\.ts$/]
@@ -53,7 +54,7 @@ module.exports = function (options) {
           {
             test: /\.scss$/,
             use: [
-              'to-string-loader', 
+              'to-string-loader',
               'css-loader',
               'sass-loader'
             ],
@@ -71,14 +72,14 @@ module.exports = function (options) {
            *
            * See: https://github.com/deepsweet/istanbul-instrumenter-loader
            */
-          
+
         ];
 
         if (isCovarageEnabled) {
           rules.push({
             enforce: 'post',
             test: /\.(js|ts)$/,
-            use: { 
+            use: {
               loader: 'istanbul-instrumenter-loader',
               options: {
                 esModules: true
@@ -93,9 +94,14 @@ module.exports = function (options) {
         }
 
         return rules;
-      })() 
+      })()
     },
     plugins: [
+      new ForkTsCheckerWebpackPlugin({
+        checkSyntacticErrors: true,
+        watch: ['./src']
+      }),
+
       new DefinePlugin({
         'ENV': JSON.stringify(ENV),
         'process.env': {
@@ -117,7 +123,7 @@ module.exports = function (options) {
         options: {
           // legacy options go here
 
-          context: helpers.root('.')          
+          context: helpers.root('.')
         }
       }),
 
