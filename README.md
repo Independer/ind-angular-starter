@@ -4,7 +4,7 @@
 Angular starter project that we use at www.independer.nl as a starting point for Angular-based projects.  
 
 Based on:
-* Angular2 Webpack Starter - https://github.com/AngularClass/angular2-webpack-starter
+* Angular4 Webpack Starter - https://github.com/AngularClass/angular-starter
 * ASP.NET Core & Angular Universal starter - https://github.com/MarkPieszak/aspnetcore-angular2-universal 
 * AspNetCoreSpa - https://github.com/asadsahi/AspNetCoreSpa
 * JavaScriptServices - https://github.com/aspnet/JavaScriptServices
