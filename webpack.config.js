@@ -117,54 +117,34 @@ module.exports = function (args = {}) {
   }
 
   config.resolve = {
-
-    // An array of extensions that should be used to resolve modules.
     extensions: ['.ts', '.js', '.json'],
-
-    // An array of directory names to be resolved to the current directory
     modules: [helpers.root('src'), helpers.root('node_modules')],
-
     alias: helpers.createTsConfigPathAliases(require('./' + tsConfigWithPathAliases))
   };
 
   config.module = {
 
     rules: [
-
-      // Typescript loader support for .ts and Angular 2 async routes via .async.ts
-      // Replace templateUrl and stylesUrl with require()
       {
         test: /\.ts$/,
         use: 'happypack/loader?id=ts',
         exclude: [/\.(spec|e2e)\.ts$/]
       },
-
-      // to string and css loader support for *.css files (from Angular components)
-      // Returns file content as string
       {
         test: /\.css$/,
         use: ['to-string-loader', 'css-loader'],
         exclude: [helpers.root('src', 'styles')]
       },
-
-      // to string and sass loader support for *.scss files (from Angular components)
-      // Returns compiled css content as string
       {
         test: /\.scss$/,
         use: ['to-string-loader', 'css-loader', 'sass-loader'],
         exclude: [helpers.root('src', 'styles')]
       },
-
-      // to string and css loader support for *.css files (from Angular components)
-      // Returns file content as string
       {
         test: /\.css$/,
         loader: isServer ? 'to-string-loader!css-loader' : ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' }),
         include: [helpers.root('src', 'styles')]
       },
-
-      // To string and sass loader support for *.scss files (from Angular components)
-      // Returns compiled css content as string
       {
         test: /\.scss$/,
         loader: isServer ? 'to-string-loader!css-loader!sass-loader' : ExtractTextPlugin.extract({
@@ -173,14 +153,10 @@ module.exports = function (args = {}) {
         }),
         include: [helpers.root('src', 'styles')]
       },
-
-      // Raw loader support for *.html. Returns file content as string
       {
         test: /\.html$/,
         use: 'raw-loader'
       },
-
-      // File loader for supporting images, for example, in CSS files.
       {
         test: /\.(jpg|png|gif)$/,
         use: 'file-loader'
@@ -228,7 +204,6 @@ module.exports = function (args = {}) {
       watch: ['./src']
     }),
 
-    // NOTE: when adding more properties make sure you include them in custom-typings.d.ts
     new DefinePlugin({
       'ENV': JSON.stringify(env),
       'process.env': {
@@ -260,19 +235,15 @@ module.exports = function (args = {}) {
 
     new NamedLazyChunksWebpackPlugin(),
 
-    // Extracts imported CSS files into external stylesheet
     new ExtractTextPlugin('[name].css')
   ];
 
   if (!isServer) {
     config.plugins = config.plugins.concat([
-      // Shares common code between the pages.It identifies common modules and put them into a commons chunk.
-      // See: https://github.com/webpack/docs/wiki/optimization#multi-page-app
       new CommonsChunkPlugin({
         name: 'polyfills',
         chunks: ['polyfills']
       }),
-      // This enables tree shaking of the vendor modules
       new CommonsChunkPlugin({
         name: 'vendor',
         chunks: ['main'],

@@ -5,20 +5,20 @@ Angular starter project that we use at www.independer.nl as a starting point for
 
 Based on:
 * Angular2 Webpack Starter - https://github.com/AngularClass/angular2-webpack-starter
-* ASP.NET Core & Angular 2+ Universal starter - https://github.com/MarkPieszak/aspnetcore-angular2-universal 
+* ASP.NET Core & Angular Universal starter - https://github.com/MarkPieszak/aspnetcore-angular2-universal 
 * AspNetCoreSpa - https://github.com/asadsahi/AspNetCoreSpa
 * JavaScriptServices - https://github.com/aspnet/JavaScriptServices
 
 ## Features
 
 * ASP.NET Core
-* Angular 2+
+* Angular
 * Angular Universal (server-side rendering)
 * Webpack 3
 * Typescript 2
 * AOT compilation
 * SASS
-* End-to-end testing of Angular 2 code using Protractor
+* End-to-end testing of Angular code using Protractor
 * HMR (Hot Module Replacement) with Webpack
 * Webpack DLL support for fast builds in development mode
 * Lazy routes

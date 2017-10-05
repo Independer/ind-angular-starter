@@ -1,5 +1,5 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import {  
+import {
   async,
   TestBed,
   ComponentFixture
@@ -37,8 +37,7 @@ describe(`App`, () => {
 
   it(`should be Angular 2 Webpack Starter`, () => {
     expect(comp.url).toEqual('https://www.independer.nl');
-    expect(comp.angularLogo).toEqual('assets/img/angular-logo.png');
-    expect(comp.name).toEqual('Angular 2 Webpack Starter');
+    expect(comp.name).toEqual('Angular Webpack Starter');
   });
 
   it('should log ngOnInit', () => {
