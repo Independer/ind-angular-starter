@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/8g11158wx2f53g1x?svg=true)](https://ci.appveyor.com/project/pglazkov/IndependerStarter)
+[![Build status](https://api.travis-ci.org/Independer/ind-angular-starter.svg?branch=master)](https://travis-ci.org/Independer/ind-angular-starter)
 
 # Advanced Angular Starter by www.independer.nl
 Based on:

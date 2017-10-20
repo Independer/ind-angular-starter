@@ -222,7 +222,7 @@ module.exports = function (args = {}) {
 
     new HappyPack({
       id: 'ts',
-      threads: cpuCount - 1, // there should be 1 cpu for the fork-ts-checker-webpack-plugin
+      threads: Math.min(cpuCount - 1 /* at least 1 cpu for the fork-ts-checker-webpack-plugin */, 8 /* More than 8 threads probably will not improve the build speed */),
       loaders: [
         {
           path: 'ng-router-loader',
