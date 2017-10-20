@@ -5,7 +5,7 @@ branches:
   only:
   - master
 configuration: Release
-platform: Any CPU
+platform: x64
 environment:
   website_name: ind-angular-starter
   nodejs_version: "6.11.4"
