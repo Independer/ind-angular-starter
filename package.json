@@ -18,7 +18,7 @@
     "clean:coverage": "rimraf -- wwwroot/coverage",
     "clean": "rimraf -- wwwroot/dist wwwroot/serverdist aot_temp wwwroot/coverage",
     "gulp": "gulp",
-    "webpack": "node --max_old_space_size=4096 node_modules/webpack/bin/webpack.js",
+    "webpack": "node --max_old_space_size=8192 node_modules/webpack/bin/webpack.js",
     "generate-iconfont": "npm run gulp generate-iconfont",
     "re-install": "npm run clean:npm && npm install",
     "lint": "npm run tslint \"src/**/*.ts\"",
