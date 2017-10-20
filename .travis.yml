@@ -1,0 +1,32 @@
+sudo: false
+dist: trusty
+language: node_js
+
+node_js:
+  - "6"
+
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
+install:
+    - npm install
+
+after_install:
+  - npm rebuild node-sass
+
+matrix:
+  fast_finish: true
+
+cache:
+  directories:
+    - "node_modules"
+
+before_script:
+  - npm rebuild node-sass
+
+script:
+    - npm run ci
