@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const helpers = require('./helpers');
 
 var bundles = {
@@ -81,7 +80,7 @@ var bundles = {
     {
       name: 'zone.js',
       path: 'zone.js/dist/long-stack-trace-zone.js'
-    },
+    }
   ],
   vendor: [
     {

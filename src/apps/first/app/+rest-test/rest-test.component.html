@@ -1,0 +1,22 @@
+<h2>This is a RestAPI Example (hitting WebAPI in our case)</h2>
+
+<p>Let's get some fake users from Rest:</p>
+
+<table class="table" *ngIf="usersAsync | async; let users; else noUsers">
+  <thead>
+    <tr>
+      <th>User ID</th>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of users">
+      <td>{{ user.id }}</td>
+      <td>{{ user.name }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #noUsers>
+  <p><em>Loading...</em></p>
+</ng-template>

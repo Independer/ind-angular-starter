@@ -4,30 +4,48 @@ const AsyncDependenciesBlock = require('webpack/lib/AsyncDependenciesBlock');
 const ContextElementDependency = require('webpack/lib/dependencies/ContextElementDependency');
 const ImportDependency = require('webpack/lib/dependencies/ImportDependency');
 
+const APP_NAME_REGEX = 'apps\\\\(.*?)\\\\';
+
 // Borrowed from Angular CLI: https://github.com/angular/angular-cli/blob/f8f42833ec2271270641a4af28174bd823d0370c/packages/%40angular/cli/plugins/named-lazy-chunks-webpack-plugin.ts
+// Customized to include the name of the app and remove ".module".
 class NamedLazyChunksWebpackPlugin extends webpack.NamedChunksPlugin {
   constructor() {
     // Append a dot and number if the name already exists.
+    const nameMap = new Map();
 
-    let getUniqueName = (baseName) => {
+    function getUniqueName(baseName) {
       let name = baseName;
       let num = 0;
-      while (this.nameMap.has(name)) {
+      while (nameMap.has(name)) {
         name = `${baseName}.${num++}`;
       }
-      this.nameMap.set(name, true);
+      nameMap.set(name, true);
       return name;
     }
 
-    let createChunkNameFromModuleFilePath = (filePath) => {
+    function createChunkNameFromModuleFilePath(filePath) {
+      let appName = '';
+      let appNameMatch = new RegExp(APP_NAME_REGEX).exec(filePath);
+
+      if (appNameMatch && appNameMatch.length > 0) {
+        appName = appNameMatch[1];
+      }
+
       let moduleName = basename(filePath).replace(/(\.ngfactory)?(\.(js|ts))?$/, '').replace(/\.module$/, '');
+
+      if (appName) {
+        // Get rid of the app name prefix in the module file name (we will add the prefix separately).
+        moduleName = moduleName.replace(`${appName}-`, '');
+      }
 
       if (!moduleName || moduleName === '') {
         // Bail out if something went wrong with the name.
         return null;
       }
 
-      return moduleName;
+      let result = (appName ? `${appName}.` : '') + moduleName;
+
+      return result;
     }
 
     const nameResolver = (chunk) => {
@@ -55,16 +73,6 @@ class NamedLazyChunksWebpackPlugin extends webpack.NamedChunksPlugin {
     };
 
     super(nameResolver);
-
-    this.nameMap = new Map();
-  }
-
-  apply(compiler) {
-    super.apply(compiler);
-
-    compiler.plugin("done", (stats) => {
-		  this.nameMap.clear();
-		});
   }
 }
 

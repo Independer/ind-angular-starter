@@ -32,7 +32,7 @@
      * Disallow redeclaring a variable within the same block scope more than once.
      * Note that this is only useful as long as we don't have no-var-keyword set to true.
      */
-    "no-duplicate-variable": true,    
+    "no-duplicate-variable": true,
     /**
      * Require single quotation marks for strings, unless using double quotation marks
      * avoid the need for escaping (e.g. "Hello 'World'" would be allowed).
@@ -59,7 +59,7 @@
       "allow-leading-underscore"
     ],
     /**
-     * Always require whitespace after if/else/for/while, var declarations, 
+     * Always require whitespace after if/else/for/while, var declarations,
      * around operators, after separator tokens (,/;) and before variable type specifications.
      * Do not require whitespace after a typecast (as per Microsoft TypeScript convention).
      */
@@ -111,7 +111,7 @@
     /**
      * Whenever a variable isn't modified. It needs to be declared as a const instead of let.
      */
-    // Disabled because it throws an exception "Cannot read property 'Export' of undefined' while validating". 
+    // Disabled because it throws an exception "Cannot read property 'Export' of undefined' while validating".
     // "prefer-const": true,
     /**
      * Disallow empty interfaces, because they're useless.
@@ -140,12 +140,12 @@
       }
     ],
     /**
-     * Disable reason: it caused enough inconvenience to outweigh its usefulness (we didn't have any real problems with "magic numbers" in the past). 
+     * Disable reason: it caused enough inconvenience to outweigh its usefulness (we didn't have any real problems with "magic numbers" in the past).
      */
     "no-magic-numbers": false,
     /**
      * Don't use any, because it removes the compile-time benefits of TypeScript.
-     * We disable this option, because there are actualy many practical usages 
+     * We disable this option, because there are actualy many practical usages
      * of any which we don't want to comment out.
      */
     "no-any": false,
@@ -220,7 +220,7 @@
     "no-eval": true,
     /**
      * Disallow using for...in on array types.
-     * 
+     *
      * We'd like this rule to be on, however, for this type checking needs to be enabled and that's not an option within
      * the editors right now. https://github.com/Microsoft/vscode-tslint/issues/70
      */
@@ -263,38 +263,38 @@
      * Disallows unused expression statements.
      * Unused expressions are expression statements which are not assignments or function calls (and thus usually no-ops).
      */
-    "no-unused-expression": true,    
+    "no-unused-expression": true,
     /**
      * Requires expressions of type void to appear in statement position.
-     * 
+     *
      * We'd like this rule to be on, however, for this type checking needs to be enabled and that's not an option within
      * the editors right now. https://github.com/Microsoft/vscode-tslint/issues/70
      */
     //"no-void-expression": true
     /**
      * Enforce parseInt to be called with the radix parameter.
-     * Always specify this parameter to eliminate reader confusion and to guarantee predictable behavior. 
+     * Always specify this parameter to eliminate reader confusion and to guarantee predictable behavior.
      * Different implementations produce different results when a radix is not specified, usually defaulting the value to 10.
      */
     "radix": true,
     /**
      * When adding two variables, operands must both be of type number or of type string.
-     * 
+     *
      * We'd like this rule to be on, however, for this type checking needs to be enabled and that's not an option within
      * the editors right now. https://github.com/Microsoft/vscode-tslint/issues/70
      */
     //"restrict-plus-operands": true,
     /**
-     * Usage of && or || operators should be with boolean operands and expressions 
+     * Usage of && or || operators should be with boolean operands and expressions
      * in if, do, while and for statements should be of type boolean.
-     * 
+     *
      * We'd like this rule to be on, however, for this type checking needs to be enabled and that's not an option within
      * the editors right now. https://github.com/Microsoft/vscode-tslint/issues/70
      */
     //"strict-boolean-expressions": true,
     /**
      * Enforces use of the isNaN() function to check for NaN references instead of a comparison to the NaN constant.
-     * Since NaN !== NaN, comparisons with regular operators will produce unexpected results. 
+     * Since NaN !== NaN, comparisons with regular operators will produce unexpected results.
      * So, instead of if (myVar === NaN), do if (isNaN(myVar)).
      */
     "use-isnan": true,
@@ -307,7 +307,7 @@
      */
     "no-require-imports": true,
     /**
-     * Disallows trailing commas in array and object literals, 
+     * Disallows trailing commas in array and object literals,
      * destructuring assignments, function and tuple typings, named imports and function parameters.
      */
     "trailing-comma": [
@@ -319,8 +319,8 @@
     ],
     /**
      * Disallows default exports in ES6-style modules. Use named exports instead.
-     * Named imports/exports promote clarity. In addition, current tooling differs 
-     * on the correct way to handle default imports/exports. 
+     * Named imports/exports promote clarity. In addition, current tooling differs
+     * on the correct way to handle default imports/exports.
      * Avoiding them all together can help avoid tooling bugs and conflicts.
      */
     "no-default-export": true,
@@ -355,8 +355,8 @@
     /**
      * Disallow prefixing of interface names with I, as per:
      * https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines
-     * 
-     * It makes sense, because within TypeScript, interfaces themselves 
+     *
+     * It makes sense, because within TypeScript, interfaces themselves
      * can also be used as an instantiated type.
      */
     "interface-name": [
@@ -464,7 +464,7 @@
     ],
     /**
       * ESLint:
-      * Enforce spacing inside array brackets. Never allow spacing before/after elements. 
+      * Enforce spacing inside array brackets. Never allow spacing before/after elements.
       * The following is not allowed: [ 'abc']
       */
     "array-bracket-spacing": [
@@ -481,7 +481,7 @@
     ],
     /**
       * ESLint:
-      * Enforce the stroustrup brace style, in which the else statements in an if-else construct, 
+      * Enforce the stroustrup brace style, in which the else statements in an if-else construct,
       * as well as catch and finally, must be on its own line after the preceding closing brace.
       */
     "brace-style": [
@@ -559,7 +559,7 @@
     "no-unnecessary-initializer": true,
     "no-misused-new": true,
     "prefer-method-signature": true,
-    "no-non-null-assertion": true,
+    "no-non-null-assertion": false, // Disable becuase we need it when working with Angular's reactive forms api (AbstractControl.get(...))
     "no-duplicate-super": true
   }
 }

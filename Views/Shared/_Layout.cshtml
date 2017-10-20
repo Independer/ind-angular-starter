@@ -1,14 +1,16 @@
-﻿@model IndAngularStarter.Server.Models.SpaModel
+﻿@using IndAngularStarter.Server.Apps
+@using Microsoft.AspNetCore.Hosting
+
+@model AppPageViewModel
+@inject IHostingEnvironment Env
 
 <!DOCTYPE html>
 <html>
 
-<head>
-  <base href="/" />
-
+<head lang="nl-NL">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <link rel="stylesheet" href="~/dist/styles.css" asp-append-version="true" />
+  <base href="@Model.BaseUrl">
 
   @if (Model.SsrResult != null) {
     <title>@Model.SsrResult.Title</title>
@@ -18,23 +20,42 @@
 
     @Html.Raw(Model.SsrResult.Styles)
   }
+  else {
+    <title>Independer Angular Starter</title>
+  }
+
+  <environment names="Production">
+    <link rel="stylesheet" href="~/dist/styles.css" asp-append-version="true" />
+  </environment>
 </head>
 
 <body>
+  @if (Model.SsrResult != null) {
+    @Html.Raw(Model.SsrResult.Html)
+  }
+  else {
+    <app>
+      <environment names="Development">
+        Loading...
+      </environment>
+    </app>
+
+    <environment names="Development">
+      <script src="http://localhost:35729/livereload.js"></script>
+      <script src="~/dll_dev/polyfills.dll.js" asp-append-version="true"></script>
+      <script src="~/dll_dev/vendor.dll.js" asp-append-version="true"></script>
+    </environment>
+
+    <script src="~/dist/polyfills.js" asp-append-version="true"></script>
+    <script src="~/dist/vendor.js" asp-append-version="true"></script>
+    <script src="~/dist/shared.js" asp-append-version="true"></script>
+    <script src="~/dist/styles.js" asp-append-version="true"></script>
+    <script src="@Model.MainBundleUrl" asp-append-version="true"></script>
+  }
+
   @RenderBody()
-
-  <script src="~/dist/manifest.js" asp-append-version="true"></script>
-
-  <environment names="Development">
-    <script src="~/dll_dev/polyfills.dll.js" asp-append-version="true"></script>
-    <script src="~/dll_dev/vendor.dll.js" asp-append-version="true"></script>
-  </environment>
-
-  <script src="~/dist/polyfills.js" asp-append-version="true"></script>
-
-  <script src="~/dist/vendor.js" asp-append-version="true"></script>
-
   @RenderSection("scripts", required: false)
+
 </body>
 
 </html>

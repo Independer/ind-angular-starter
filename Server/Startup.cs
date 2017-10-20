@@ -2,7 +2,7 @@
 using CompressedStaticFiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,9 +14,11 @@ namespace IndAngularStarter.Server {
       var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{Environment.MachineName}.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{Environment.MachineName}.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
+
       Configuration = builder.Build();
     }
 
@@ -27,33 +29,29 @@ namespace IndAngularStarter.Server {
       // Add framework services.
       services.AddMvc();
       services.AddNodeServices();
-
+      services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+      services.AddSingleton<SsrDecider, SsrDecider>();
       services.Configure<SsrOptions>(Configuration.GetSection("ServerRendering"));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
-      loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+      loggerFactory.AddConsole(Configuration.GetSection("ConsoleLogging"));
       loggerFactory.AddDebug();
 
       if (env.IsDevelopment()) {
         app.UseDeveloperExceptionPage();
 
-        app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions {
-          HotModuleReplacement = true
-        });
+        app.UseWebpackDevMiddleware();
       }
 
-      app.UseMvc(routes => {
-        routes.MapSpaFallbackRoute(
-            name: "spa-fallback",
-            defaults: new { controller = "Home", action = "Index" });
-      });
+      app.UseMvc();
 
-      // Server *.gz files when present
+      app.UseDefaultFiles();
+
+      // Serve *.gz files when present
       // See https://github.com/aspnet/StaticFiles/issues/7 and https://github.com/AnderssonPeter/CompressedStaticFiles
-      app.UseCompressedStaticFiles(); 
-      
+      app.UseCompressedStaticFiles();
       app.UseStaticFiles();
     }
   }

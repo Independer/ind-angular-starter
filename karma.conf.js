@@ -1,6 +1,6 @@
 const helpers = require('./helpers');
 
-const isCovarageEnabled = helpers.isTestCovarageEnabled(); 
+const isCoverageEnabled = helpers.isTestCoverageEnabled(); 
 
 module.exports = function (config) {
   var testWebpackConfig = require('./webpack.test.js')({
@@ -42,7 +42,7 @@ module.exports = function (config) {
      * available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
      */
     preprocessors: {
-      './spec-bundle.js': isCovarageEnabled ? ['coverage', 'webpack', 'sourcemap'] : ['webpack', 'sourcemap']
+      './spec-bundle.js': isCoverageEnabled ? ['coverage', 'webpack', 'sourcemap'] : ['webpack', 'sourcemap']
     },
 
     // Webpack Config at ./webpack.test.js
@@ -105,7 +105,7 @@ module.exports = function (config) {
     singleRun: true
   };
   
-  if (isCovarageEnabled) {
+  if (isCoverageEnabled) {
     configuration.reporters.push('coverage');
     configuration.reporters.push('remap-coverage');
 

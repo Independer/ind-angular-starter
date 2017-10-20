@@ -2,7 +2,6 @@ const helpers = require('./helpers');
 const path = require('path');
 
 const webpack = require('webpack');
-const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
@@ -10,7 +9,7 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
 
-const isCovarageEnabled = helpers.isTestCovarageEnabled();
+const isCoverageEnabled = helpers.isTestCoverageEnabled();
 
 module.exports = function (options) {
   return {
@@ -28,9 +27,7 @@ module.exports = function (options) {
             test: /\.js$/,
             use: 'source-map-loader',
             exclude: [
-              // these packages have problems with their sourcemaps
-              helpers.root('node_modules/rxjs'),
-              helpers.root('node_modules/@angular')
+              helpers.root('node_modules')
             ]
           },
           {
@@ -57,7 +54,17 @@ module.exports = function (options) {
               'to-string-loader',
               'css-loader',
               'sass-loader'
-            ],
+              // Uncomment the following loader to add resources that should be included in all component SASS styles
+              // {
+              //   loader: 'sass-resources-loader',
+              //   options: {
+              //     resources: [
+              //       helpers.root('src/styles/base/variables/*.scss'),
+              //       helpers.root('src/styles/base/mixins/*.scss')
+              //     ]
+              //   }
+              // }
+              ],
             exclude: [helpers.root('src/index.html')]
           },
           {
@@ -75,7 +82,7 @@ module.exports = function (options) {
 
         ];
 
-        if (isCovarageEnabled) {
+        if (isCoverageEnabled) {
           rules.push({
             enforce: 'post',
             test: /\.(js|ts)$/,
@@ -137,7 +144,7 @@ module.exports = function (options) {
     },
     node: {
       global: true,
-      process: false,
+      process: true,
       crypto: 'empty',
       module: false,
       clearImmediate: false,

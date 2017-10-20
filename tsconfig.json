@@ -25,7 +25,10 @@
     "paths": {
       "shared/*": [ "this-folder-does-not-exist/*" ],
       "app/*": [ "this-folder-does-not-exist/*" ],
-      "shared": [ "shared" ]
+      "shared": [ "shared" ],
+      "shared-server": ["shared/ssr/server-only"],
+      "first/shared": [ "apps/first/app/shared" ],
+      "second/shared": [ "apps/second/app/shared" ]
     }
   },
   "exclude": [
@@ -33,7 +36,7 @@
     "wwwroot",
     "src/**/*.aot.ts",
     "src/**/**.aot.ts",
-    "src/temporary-aspnetcore-engine.ts"
+    "server-only"
   ],
   "compileOnSave": false,
   "buildOnSave": false

@@ -1,12 +1,9 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/8g11158wx2f53g1x?svg=true)](https://ci.appveyor.com/project/pglazkov/IndependerStarter)
 
-# Angular Starter by www.independer.nl
-Angular starter project that we use at www.independer.nl as a starting point for Angular-based projects.  
-
+# Advanced Angular Starter by www.independer.nl
 Based on:
-* Angular4 Webpack Starter - https://github.com/AngularClass/angular-starter
+* Angular 4 Webpack Starter - https://github.com/AngularClass/angular-starter
 * ASP.NET Core & Angular Universal starter - https://github.com/MarkPieszak/aspnetcore-angular2-universal 
-* AspNetCoreSpa - https://github.com/asadsahi/AspNetCoreSpa
 * JavaScriptServices - https://github.com/aspnet/JavaScriptServices
 
 ## Features
@@ -14,12 +11,11 @@ Based on:
 * ASP.NET Core
 * Angular
 * Angular Universal (server-side rendering)
+* Multiple Apps
 * Webpack 3
 * Typescript 2
 * AOT compilation
 * SASS
-* End-to-end testing of Angular code using Protractor
-* HMR (Hot Module Replacement) with Webpack
 * Webpack DLL support for fast builds in development mode
 * Lazy routes
 * [@ngx-meta](https://github.com/ngx-meta/core) for SEO
@@ -34,9 +30,11 @@ Based on:
 2. Restore .NET Core packages:
 
           dotnet restore
+          
 3. Restore NPM packages:
 
           npm install
+          
 8. Run the app using one the options:
     * From command-line
     
@@ -49,8 +47,8 @@ Based on:
     * From Visual Studio:
     
             F5 - starts IIS Express development server.
-9. In the browser go to http://localhost:5000
-
+            
+9. Navigate to http://localhost:5000 in a web browser
 
 ## Other commands
 
@@ -65,24 +63,19 @@ npm run build:server
 ```bash
 npm run build:server:prod
 ```
-### Run End-to-End Tests
-```bash
-npm run e2e:dev
-```
-```bash
-npm run e2e:prod
-```
-OR
+### CI build
+This command will run TSLint, build all bundles in all configurations and run unit tests.
 ```bash
 npm run ci
 ```
-This last command will first make the development build, then run e2e tests, then make the production build and then again run e2e tests.
 
 ### More commands
 For even more commands, please see the "scripts" section of `package.json`.
 
 ## Server-Side Rendering
-Server-side rendering is enabled only for `Production` environment by default (see `appsettings.Production.json`). In order to enable it for `Development` environment as well, you need to modify `appsettings.json` and set `ServerRendering/IsEnabled` settings to `true`:
+Server-side rendering is enabled only when the page is requested by a search engine bot (based on User-Agent header) or if the URL contains `?_escaped_fragment_=` (a legacy way for recognizing search engine bots, but we keep it because it is useful for testing). 
+
+In order to disable server-side rendering completely set `ServerRendering/IsEnabled` settings to `true` in `appsettings.json`:
 
 ```json
 {

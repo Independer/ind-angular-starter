@@ -1,9 +1,10 @@
-import './polyfills.ts';
+import './polyfills';
 
 import 'zone.js/dist/zone';
 
 if ('production' === ENV) {
   // Production
+
 }
 else {
 
@@ -13,6 +14,5 @@ else {
   /* tslint:disable no-require-imports */
   /* tslint:disable no-var-requires */
   require('zone.js/dist/long-stack-trace-zone');
-}
 
-import 'reflect-metadata';
+}

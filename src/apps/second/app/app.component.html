@@ -1,0 +1,19 @@
+<nav>
+  <a [routerLink]="['']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+  <a [routerLink]="['lazy1']" routerLinkActive="active">Lazy Route 1</a>
+  <a [routerLink]="['lazy2']" routerLinkActive="active">Lazy Route 2</a>
+</nav>
+<header>
+  <h1>This is the SECOND app</h1>
+</header>
+<main>
+  <router-outlet></router-outlet>
+</main>
+<footer>
+  <span>{{ titleService.title }}</span>
+  <div>
+    <a [href]="titleService.authorUrl">
+      {{ titleService.authorUrl }}
+    </a>
+  </div>
+</footer>

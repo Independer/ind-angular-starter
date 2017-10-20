@@ -1,6 +1,8 @@
 // Based on angular2-webpack-starter: https://github.com/AngularClass/angular2-webpack-starter/tree/1349411df7ced79f2e8486ce7f4aae6ab5e083e0
 
-const webpack = require('webpack');
+// see https://github.com/webpack/loader-utils/issues/56
+process.noDeprecation = true;
+
 const os = require('os');
 const helpers = require('./helpers');
 const NormalModuleReplacementPlugin = require('webpack/lib/NormalModuleReplacementPlugin');
@@ -9,19 +11,32 @@ const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
+const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const ngcWebpack = require('ngc-webpack');
 const CompressionPlugin = require('compression-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const OptimizeJsPlugin = require('optimize-js-plugin');
 const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
-const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const LiveReloadPlugin = require('webpack-livereload-plugin');
 const { NamedLazyChunksWebpackPlugin } = require('./webpack.plugins');
 const HappyPack = require('happypack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+
+const apps = [
+  {
+    name: 'first',
+    baseUrl: '/first',
+    supportSsr: true
+  },
+  {
+    name: 'second',
+    baseUrl: '/second',
+    supportSsr: true
+  }
+];
 
 const stats = {
   assets: true,
@@ -53,9 +68,10 @@ const stats = {
 module.exports = function (args = {}) {
   const env = args.PROD ? 'Production' : (process.env.ASPNETCORE_ENVIRONMENT || 'Development');
   const isDev = env === 'Production' ? false : true;
-  const isProd = !isDev;
   const isServer = !!args.SERVER;
   const isAot = !!args.AOT;
+  const enableDevDlls = !args.NO_DEV_DLL;
+  const isNodeDevServer = helpers.isWebpackDevServer();
   const distPath =  isServer ? 'serverdist' : 'dist';
   const tsConfigName = isDev ? 'tsconfig.json' : 'tsconfig.prod.json';
   const tsConfigWithPathAliases = 'tsconfig.json';
@@ -66,6 +82,10 @@ module.exports = function (args = {}) {
     console.log('Running Webpack build in Analyze mode. A web browser window with statistics will be opened after the build completes sucessfully.');
   }
 
+  if (isNodeDevServer) {
+    console.log('Running Webpack build in the webpack-dev-server mode (the HTML will be generated on the fly and no files will be writen to disk).')
+  }
+
   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ' + (isServer ? 'SERVER' : 'BROWSER') + ' | ' + env.toUpperCase() + ' | ' + (isAot ? 'AOT' : 'JIT') + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
   console.log('CPU Count: ' + cpuCount);
 
@@ -73,7 +93,10 @@ module.exports = function (args = {}) {
 
   config.target = isServer ? 'node' : 'web';
   config.stats = stats;
-  config.bail = !isDev;
+
+  if (!isDev) {
+    config.bail = true;
+  }
 
   if (isDev) {
     if (isServer) {
@@ -84,20 +107,22 @@ module.exports = function (args = {}) {
     }
   }
 
-  // Cache generated modules and chunks to improve performance for multiple incremental builds.
-  // This is enabled by default in watch mode.
-  // You can pass false to disable it.
-  //config.cache = false,
-
   config.entry = {};
 
   if (isServer) {
-    config.entry['main'] = isAot ? './src/main.server.aot.ts' : './src/main.server.ts';
+    apps.forEach(function (app) {
+      if (app.supportSsr) {
+        config.entry[getAppBundleName(app)] = './src/apps/' + app.name + (isAot ? '/main.server.aot.ts' : '/main.server.ts');
+      }
+    });
   }
   else {
     config.entry['polyfills'] = './src/polyfills.browser.ts';
-    config.entry['main'] = isAot ? './src/main.browser.aot.ts' : './src/main.browser.ts';
     config.entry['styles'] = './src/styles/app.scss';
+
+    apps.forEach(function (app) {
+      config.entry[getAppBundleName(app)] = './src/apps/' + app.name + (isAot ? '/main.browser.aot.ts' : '/main.browser.ts');
+    });
   }
 
   config.output = {
@@ -105,7 +130,7 @@ module.exports = function (args = {}) {
   };
 
   config.output.filename = '[name].js';
-  config.output.chunkFilename = '[name].[chunkhash].chunk.js';
+  config.output.chunkFilename = '[name].[chunkhash].js';
   config.output.publicPath = '/dist/';
 
   if (isServer) {
@@ -117,53 +142,75 @@ module.exports = function (args = {}) {
   }
 
   config.resolve = {
+
+    // An array of extensions that should be used to resolve modules.
     extensions: ['.ts', '.js', '.json'],
+
+    // An array of directory names to be resolved to the current directory
     modules: [helpers.root('src'), helpers.root('node_modules')],
+
     alias: helpers.createTsConfigPathAliases(require('./' + tsConfigWithPathAliases))
   };
 
   config.module = {
 
-    rules: [
-      {
-        test: /\.ts$/,
-        use: 'happypack/loader?id=ts',
-        exclude: [/\.(spec|e2e)\.ts$/]
-      },
-      {
-        test: /\.css$/,
-        use: ['to-string-loader', 'css-loader'],
-        exclude: [helpers.root('src', 'styles')]
-      },
-      {
-        test: /\.scss$/,
-        use: ['to-string-loader', 'css-loader', 'sass-loader'],
-        exclude: [helpers.root('src', 'styles')]
-      },
-      {
-        test: /\.css$/,
-        loader: isServer ? 'to-string-loader!css-loader' : ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' }),
-        include: [helpers.root('src', 'styles')]
-      },
-      {
-        test: /\.scss$/,
-        loader: isServer ? 'to-string-loader!css-loader!sass-loader' : ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: 'css-loader!sass-loader'
-        }),
-        include: [helpers.root('src', 'styles')]
-      },
-      {
-        test: /\.html$/,
-        use: 'raw-loader'
-      },
-      {
-        test: /\.(jpg|png|gif)$/,
-        use: 'file-loader'
-      },
+    rules: (() => {
+      let rules = [];
 
-    ],
+      rules = rules.concat([
+        {
+          test: /\.ts$/,
+          use: 'happypack/loader?id=ts',
+          exclude: [/\.(spec|e2e)\.ts$/]
+        },
+        {
+          test: /\.css$/,
+          use: ['to-string-loader', 'css-loader'],
+          exclude: [helpers.root('src', 'styles')]
+        },
+        {
+          test: /\.scss$/,
+          use: [
+            'to-string-loader',
+            'css-loader',
+            'sass-loader'
+            // Uncomment the following loader to add resources that should be included in all component SASS styles
+            // {
+            //   loader: 'sass-resources-loader',
+            //   options: {
+            //     resources: [
+            //       helpers.root('src/styles/base/variables/*.scss'),
+            //       helpers.root('src/styles/base/mixins/*.scss')
+            //     ]
+            //   }
+            // }
+          ],
+          exclude: [helpers.root('src', 'styles')]
+        },
+        {
+          test: /\.css$/,
+          loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' }),
+          include: [helpers.root('src', 'styles')]
+        },
+        {
+          test: /\.scss$/,
+          loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader!sass-loader' }),
+          include: [helpers.root('src', 'styles')]
+        },
+        {
+          test: /\.html$/,
+          use: 'raw-loader',
+          exclude: [helpers.root('dev_server_template.html')]
+        },
+        {
+          test: /\.(jpg|png|gif)$/,
+          use: 'file-loader'
+        },
 
+      ]);
+
+      return rules;
+    })()
   };
 
   config.plugins = [
@@ -204,6 +251,7 @@ module.exports = function (args = {}) {
       watch: ['./src']
     }),
 
+    // NOTE: when adding more properties make sure you include them in custom-typings.d.ts
     new DefinePlugin({
       'ENV': JSON.stringify(env),
       'process.env': {
@@ -224,7 +272,10 @@ module.exports = function (args = {}) {
     // Experimental. See: https://gist.github.com/sokra/27b24881210b56bbaff7
     new LoaderOptionsPlugin({
       minimize: !isDev,
-      debug: isDev
+      debug: isDev,
+      options: {
+        context: helpers.root('.')
+      }
     }),
 
     new ngcWebpack.NgcWebpackPlugin({
@@ -235,7 +286,10 @@ module.exports = function (args = {}) {
 
     new NamedLazyChunksWebpackPlugin(),
 
-    new ExtractTextPlugin('[name].css')
+    new ExtractTextPlugin({
+      filename: '[name].css',
+      disable: isDev || isServer
+    }),
   ];
 
   if (!isServer) {
@@ -246,33 +300,100 @@ module.exports = function (args = {}) {
       }),
       new CommonsChunkPlugin({
         name: 'vendor',
-        chunks: ['main'],
-        minChunks: module => /node_modules/.test(module.resource)
+        chunks: apps.map(getAppBundleName),
+        minChunks: module => /node_modules|(lib(\\|\/)npm)/.test(module.resource)
       }),
       new CommonsChunkPlugin({
-        name: 'manifest',
-        minChunks: Infinity
+        name: 'shared',
+        chunks: apps.map(getAppBundleName),
+        minChunks: module => /src(\\|\/)shared/.test(module.resource)
       })
     ]);
   }
 
-  if (isDev && !isServer) {
-    var dllConfig = require('./webpack.dev.dll.js');
+  if (analyzeMode) {
+    config.plugins = config.plugins.concat([
+      new BundleAnalyzerPlugin({
+        analyzerMode: 'static',
+        reportFilename: 'report.html',
+        openAnalyzer: false,
+        generateStatsFile: true,
+        statsFilename: 'stats.json',
+        statsOptions: null,
+        logLevel: 'info'
+      }),
+    ]);
+  }
 
+  if (isDev) {
     config.plugins = config.plugins.concat([
       new CircularDependencyPlugin({
         // exclude detection of files based on a RegExp
         exclude: /a\.js|node_modules/,
         // add errors to webpack instead of warnings
         failOnError: true
-      }),
-
-      new DllBundlesPlugin({
-        bundles: dllConfig.bundles,
-        dllDir: helpers.root('wwwroot', 'dll_dev'),
-        webpackConfig: dllConfig.webpackConfig
       })
     ]);
+
+    if (!isNodeDevServer /* webpack-dev-server does automatic reload */) {
+      config.plugins = config.plugins.concat([
+        new LiveReloadPlugin()
+      ]);
+    }
+
+    if (enableDevDlls && !isServer) {
+      var dllConfig = require('./webpack.dev.dll.js');
+
+      config.plugins = config.plugins.concat([
+        new DllBundlesPlugin({
+          bundles: dllConfig.bundles,
+          dllDir: helpers.root('wwwroot', 'dll_dev'),
+          webpackConfig: dllConfig.webpackConfig
+        })
+      ]);
+    }
+
+    if (isNodeDevServer) {
+      const HtmlWebpackPlugin = require('html-webpack-plugin');
+      const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
+      const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
+
+      config.plugins = config.plugins.concat([
+        new AddAssetHtmlPlugin([{
+          filepath: helpers.root('wwwroot', `dll_dev/${DllBundlesPlugin.resolveFile('polyfills')}`)
+        },
+        {
+          filepath: helpers.root('wwwroot', `dll_dev/${DllBundlesPlugin.resolveFile('vendor')}`)
+        }
+        ]),
+
+        new NamedModulesPlugin()
+      ]);
+
+      apps.forEach(function (app) {
+        var otherApps = apps.slice();
+
+        var appItemIndex = otherApps.indexOf(app);
+
+        if (appItemIndex > -1) {
+          otherApps.splice(appItemIndex, 1);
+        }
+
+        config.plugins.push(new HtmlWebpackPlugin({
+          template: 'dev_server_template.html',
+          title: app.name,
+          filename: getAppDevServerHtmlFileName(app),
+          excludeChunks: otherApps.map(getAppBundleName),
+          chunksSortMode: 'manual',
+          chunks: ['polyfills', 'vendor', 'shared', 'styles', getAppBundleName(app)],
+          inject: 'head',
+          metadata: {
+            isDevServer: helpers.isWebpackDevServer(),
+            baseUrl: app.baseUrl
+          }
+        }));
+      });
+    }
   }
 
   if (!isDev) {
@@ -280,7 +401,6 @@ module.exports = function (args = {}) {
       new OptimizeJsPlugin({
         sourceMap: false
       }),
-
       // Description: Minimize all JavaScript output of chunks.
       // Loaders are switched into minimizing mode.
       // NOTE: To debug prod builds uncomment //debug lines and comment //prod lines
@@ -324,6 +444,11 @@ module.exports = function (args = {}) {
           negate_iife: false // we need this for lazy v8
         },
       }),
+
+      new NormalModuleReplacementPlugin(
+        /angular2-hmr/,
+        helpers.root('empty.js')
+      ),
 
       new NormalModuleReplacementPlugin(
         /zone\.js(\\|\/)dist(\\|\/)long-stack-trace-zone/,
@@ -377,20 +502,6 @@ module.exports = function (args = {}) {
     ]);
   }
 
-  if (analyzeMode) {
-    config.plugins = config.plugins.concat([
-      new BundleAnalyzerPlugin({
-        analyzerMode: 'static',
-        reportFilename: 'report.html',
-        openAnalyzer: false,
-        generateStatsFile: true,
-        statsFilename: 'stats.json',
-        statsOptions: null,
-        logLevel: 'info'
-      })
-    ]);
-  }
-
   config.node = {
     global: true,
     crypto: 'empty',
@@ -404,5 +515,28 @@ module.exports = function (args = {}) {
     hints: false
   };
 
+  if (isNodeDevServer) {
+    config.devServer = {
+      port: 5000,
+      stats: stats,
+      historyApiFallback: {
+        rewrites: apps.map(function (app) {
+          return {
+            from: new RegExp('^' + app.baseUrl + '(\/.*|$)'),
+            to: '/dist/' + getAppDevServerHtmlFileName(app)
+          }
+        })
+      }
+    };
+  }
+
   return config;
-};
+}
+
+function getAppBundleName(app) {
+  return app.name;
+}
+
+function getAppDevServerHtmlFileName(app) {
+  return app.name + '_index.html';
+}

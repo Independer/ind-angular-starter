@@ -5,5 +5,5 @@ import { Component } from '@angular/core';
   templateUrl: 'shared-component.component.html'
 })
 export class SharedComponent {
-  text: 'Hallo from shared component!';
+  text = 'Hallo from shared component!';
 }
