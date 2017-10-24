@@ -21,7 +21,7 @@ const OptimizeJsPlugin = require('optimize-js-plugin');
 const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const LiveReloadPlugin = require('webpack-livereload-plugin');
-const { NamedLazyChunksWebpackPlugin } = require('./webpack.plugins');
+const AngularNamedLazyChunksWebpackPlugin = require('angular-named-lazy-chunks-webpack-plugin');
 const HappyPack = require('happypack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
@@ -284,7 +284,7 @@ module.exports = function (args = {}) {
       resourceOverride: helpers.root('aot-empty-resource.js')
     }),
 
-    new NamedLazyChunksWebpackPlugin(),
+    new AngularNamedLazyChunksWebpackPlugin({ multiAppMode: true }),
 
     new ExtractTextPlugin({
       filename: '[name].css',
