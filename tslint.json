@@ -539,7 +539,6 @@
     "templates-use-public": false,
     /* Disabled because requires type checking */
     "no-access-missing-member": false,
-    "invoke-injectable": true,
     "space-before-function-paren": [
       true,
       {

@@ -8,6 +8,7 @@ const helpers = require('./helpers');
 const NormalModuleReplacementPlugin = require('webpack/lib/NormalModuleReplacementPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
+const ModuleConcatenationPlugin = require('webpack/lib/optimize/ModuleConcatenationPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -24,6 +25,7 @@ const LiveReloadPlugin = require('webpack-livereload-plugin');
 const AngularNamedLazyChunksWebpackPlugin = require('angular-named-lazy-chunks-webpack-plugin');
 const HappyPack = require('happypack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const { PurifyPlugin } = require('@angular-devkit/build-optimizer');
 
 const apps = [
   {
@@ -223,27 +225,42 @@ module.exports = function (args = {}) {
     new HappyPack({
       id: 'ts',
       threads: Math.min(cpuCount - 1 /* at least 1 cpu for the fork-ts-checker-webpack-plugin */, 8 /* More than 8 threads probably will not improve the build speed */),
-      loaders: [
-        {
-          path: 'ng-router-loader',
-          query: {
-            loader: 'async-import',
-            genDir: 'aot_temp',
-            aot: isAot,
-            debug: false
-          }
-        },
-        {
-          path: 'ts-loader',
-          query: {
-            configFile: tsConfigName,
-            happyPackMode: true
-          }
-        },
-        {
-          path: 'angular2-template-loader'
+      loaders: (() => {
+        let loaders = [];
+
+        if (!isDev) {
+          loaders.push({
+            path: '@angular-devkit/build-optimizer/webpack-loader',
+            query: {
+              sourceMap: false
+            }
+          });
         }
-      ],
+
+        loaders = loaders.concat([
+          {
+            path: 'ng-router-loader',
+            query: {
+              loader: 'async-import',
+              genDir: 'aot_temp',
+              aot: isAot,
+              debug: false
+            }
+          },
+          {
+            path: 'ts-loader',
+            query: {
+              configFile: tsConfigName,
+              happyPackMode: true
+            }
+          },
+          {
+            path: 'angular2-template-loader'
+          }
+        ]);
+
+        return loaders;
+      })()
     }),
 
     new ForkTsCheckerWebpackPlugin({
@@ -280,8 +297,7 @@ module.exports = function (args = {}) {
 
     new ngcWebpack.NgcWebpackPlugin({
       disabled: !isAot,
-      tsConfig: helpers.root(tsConfigName),
-      resourceOverride: helpers.root('aot-empty-resource.js')
+      tsConfig: helpers.root(tsConfigName)
     }),
 
     new AngularNamedLazyChunksWebpackPlugin({ multiAppMode: true }),
@@ -306,9 +322,28 @@ module.exports = function (args = {}) {
       new CommonsChunkPlugin({
         name: 'shared',
         chunks: apps.map(getAppBundleName),
-        minChunks: module => /src(\\|\/)shared/.test(module.resource)
+        deepChildren: true,
+        minChunks: 2
       })
     ]);
+
+    apps.forEach(app => {
+      config.plugins.push(new CommonsChunkPlugin({
+        // Name of the entry chunk for the app
+        name: getAppBundleName(app),
+
+        // Extract all common code from children and deep children
+        children: true,
+        deepChildren: true,
+
+        // Move all the common code an <app_name>.common chunk that is going to
+        // be asyncroniously loaded
+        async: getAppBundleName(app) + '.common',
+
+        // Move to common chank only if the code is used by 2 or more chunks.
+        minChunks: 2
+      }));
+    });
   }
 
   if (analyzeMode) {
@@ -401,6 +436,12 @@ module.exports = function (args = {}) {
       new OptimizeJsPlugin({
         sourceMap: false
       }),
+
+      new ModuleConcatenationPlugin(),
+
+      // This plugin must be before webpack.optimize.UglifyJsPlugin.
+      new PurifyPlugin(),
+
       // Description: Minimize all JavaScript output of chunks.
       // Loaders are switched into minimizing mode.
       // NOTE: To debug prod builds uncomment //debug lines and comment //prod lines
@@ -441,7 +482,14 @@ module.exports = function (args = {}) {
           evaluate: true,
           if_return: true,
           join_vars: true,
-          negate_iife: false // we need this for lazy v8
+          negate_iife: false, // we need this for lazy v8
+
+          pure_getters: true,
+
+          // PURE comments work best with 3 passes.
+          // See https://github.com/webpack/webpack/issues/2899#issuecomment-317425926.
+          // Using 1 pass for SSR because for some reason server-side rendering fails with "Cannot read property 'performance' of undefined" if `passes` is set to 3.
+          passes: isServer ? 1 : 3
         },
       }),
 
