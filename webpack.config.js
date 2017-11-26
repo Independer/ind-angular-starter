@@ -333,7 +333,8 @@ module.exports = function (args = {}) {
           {
             path: 'angular-router-loader',
             query: {
-              debug: true
+              debug: true,
+              loader: 'system'
             }
           },
           {
@@ -445,7 +446,8 @@ module.exports = function (args = {}) {
             path: 'angular-router-loader',
             query: {
               aot: true,
-              debug: true
+              debug: true,
+              loader: 'system'
             }
           } 
         ]
