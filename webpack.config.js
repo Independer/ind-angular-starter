@@ -14,7 +14,6 @@ const DefinePlugin = require('webpack/lib/DefinePlugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
-const ngcWebpack = require('ngc-webpack');
 const CompressionPlugin = require('compression-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -159,12 +158,21 @@ module.exports = function (args = {}) {
     rules: (() => {
       let rules = [];
 
-      rules = rules.concat([
-        {
+      if (!isDev) {
+        rules.push({          
+          test: /\.(ts|js)$/,
+          use: 'happypack/loader?id=js'          
+        });
+      }
+      else {
+        rules.push({
           test: /\.ts$/,
           use: 'happypack/loader?id=ts',
           exclude: [/\.(spec|e2e)\.ts$/]
-        },
+        });
+      }
+
+      rules = rules.concat([        
         {
           test: /\.css$/,
           use: ['to-string-loader', 'css-loader'],
@@ -216,57 +224,11 @@ module.exports = function (args = {}) {
   };
 
   config.plugins = [
-    new CleanWebpackPlugin([helpers.root('wwwroot', distPath), helpers.root('aot_temp')], {
+    new CleanWebpackPlugin([helpers.root('wwwroot', distPath)], {
       verbose: false
     }),
 
-    new ProgressPlugin(),
-
-    new HappyPack({
-      id: 'ts',
-      threads: Math.min(cpuCount - 1 /* at least 1 cpu for the fork-ts-checker-webpack-plugin */, 8 /* More than 8 threads probably will not improve the build speed */),
-      loaders: (() => {
-        let loaders = [];
-
-        if (!isDev) {
-          loaders.push({
-            path: '@angular-devkit/build-optimizer/webpack-loader',
-            query: {
-              sourceMap: false
-            }
-          });
-        }
-
-        loaders = loaders.concat([
-          {
-            path: 'ng-router-loader',
-            query: {
-              loader: 'async-import',
-              genDir: 'aot_temp',
-              aot: isAot,
-              debug: false
-            }
-          },
-          {
-            path: 'ts-loader',
-            query: {
-              configFile: tsConfigName,
-              happyPackMode: true
-            }
-          },
-          {
-            path: 'angular2-template-loader'
-          }
-        ]);
-
-        return loaders;
-      })()
-    }),
-
-    new ForkTsCheckerWebpackPlugin({
-      checkSyntacticErrors: true,
-      watch: ['./src']
-    }),
+    new ProgressPlugin(),    
 
     // NOTE: when adding more properties make sure you include them in custom-typings.d.ts
     new DefinePlugin({
@@ -279,7 +241,7 @@ module.exports = function (args = {}) {
 
     // Provides context to Angular's use of System.import. See: https://github.com/angular/angular/issues/11580
     new ContextReplacementPlugin(
-      /angular(\\|\/)core(\\|\/)@angular/,
+      /angular(\\|\/)core(\\|\/)(@angular|esm5)/,
       helpers.root('src'), // location of your src
       {
         // your Angular Async Route paths relative to this root directory
@@ -293,11 +255,6 @@ module.exports = function (args = {}) {
       options: {
         context: helpers.root('.')
       }
-    }),
-
-    new ngcWebpack.NgcWebpackPlugin({
-      disabled: !isAot,
-      tsConfig: helpers.root(tsConfigName)
     }),
 
     new AngularNamedLazyChunksWebpackPlugin({ multiAppMode: true }),
@@ -367,6 +324,34 @@ module.exports = function (args = {}) {
         exclude: /a\.js|node_modules/,
         // add errors to webpack instead of warnings
         failOnError: true
+      }),
+
+      new HappyPack({
+        id: 'ts',
+        threads: Math.min(cpuCount - 1 /* at least 1 cpu for the fork-ts-checker-webpack-plugin */, 8 /* More than 8 threads probably will not improve the build speed */),
+        loaders: [
+          {
+            path: 'angular-router-loader',
+            query: {
+              debug: true
+            }
+          },
+          {
+            path: 'ts-loader',
+            query: {
+              configFile: tsConfigName,
+              happyPackMode: true
+            }
+          },
+          {
+            path: 'angular2-template-loader'
+          }        
+        ]
+      }),    
+
+      new ForkTsCheckerWebpackPlugin({
+        checkSyntacticErrors: true,
+        watch: ['./src']
       })
     ]);
 
@@ -437,7 +422,34 @@ module.exports = function (args = {}) {
         sourceMap: false
       }),
 
-      new ModuleConcatenationPlugin(),
+      new ModuleConcatenationPlugin(), 
+
+      new HappyPack({
+        id: 'js',
+        threads: Math.min(cpuCount - 1 /* at least 1 cpu for the fork-ts-checker-webpack-plugin */, 8 /* More than 8 threads probably will not improve the build speed */),
+        loaders: [
+          {
+            path: '@angular-devkit/build-optimizer/webpack-loader',
+            query: {
+              sourceMap: false
+            }
+          },
+          {
+            path: 'ts-loader',
+            query: {
+              configFile: tsConfigName,
+              happyPackMode: true
+            }
+          },  
+          {
+            path: 'angular-router-loader',
+            query: {
+              aot: true,
+              debug: true
+            }
+          } 
+        ]
+      }),
 
       // This plugin must be before webpack.optimize.UglifyJsPlugin.
       new PurifyPlugin(),

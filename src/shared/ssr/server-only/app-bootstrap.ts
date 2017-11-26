@@ -1,6 +1,6 @@
 import { enableProdMode, NgModuleFactory, Type } from '@angular/core';
 import { createServerRenderer } from 'aspnet-prerendering';
-import { ngAspnetCoreEngine, IEngineOptions } from './aspnetcore-engine-temp';
+import { ngAspnetCoreEngine, IEngineOptions } from '@nguniversal/aspnetcore-engine';
 import { ssrDataToken } from '../ssr-data';
 import { LOCATION } from '../location-info-token';
 

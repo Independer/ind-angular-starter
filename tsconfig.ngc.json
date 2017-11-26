@@ -1,8 +1,9 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2015",
     "module": "es2015",
-    "allowJs": true
+    "sourceMap": false,
+    "outDir": "aot_temp"
   }
 }
