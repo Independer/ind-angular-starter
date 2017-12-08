@@ -158,21 +158,12 @@ module.exports = function (args = {}) {
     rules: (() => {
       let rules = [];
 
-      if (!isDev) {
-        rules.push({          
-          test: /\.(ts|js)$/,
-          use: 'happypack/loader?id=js'          
-        });
-      }
-      else {
-        rules.push({
-          test: /\.ts$/,
-          use: 'happypack/loader?id=ts',
-          exclude: [/\.(spec|e2e)\.ts$/]
-        });
-      }
-
-      rules = rules.concat([        
+      rules = rules.concat([
+        {
+          test: /\.(js|ts)$/,
+          use: 'happypack/loader?id=js-ts',
+          exclude: [helpers.root('node_modules')]
+        },
         {
           test: /\.css$/,
           use: ['to-string-loader', 'css-loader'],
@@ -228,7 +219,7 @@ module.exports = function (args = {}) {
       verbose: false
     }),
 
-    new ProgressPlugin(),    
+    new ProgressPlugin(),
 
     // NOTE: when adding more properties make sure you include them in custom-typings.d.ts
     new DefinePlugin({
@@ -327,7 +318,7 @@ module.exports = function (args = {}) {
       }),
 
       new HappyPack({
-        id: 'ts',
+        id: 'js-ts',
         threads: Math.min(cpuCount - 1 /* at least 1 cpu for the fork-ts-checker-webpack-plugin */, 8 /* More than 8 threads probably will not improve the build speed */),
         loaders: [
           {
@@ -346,9 +337,9 @@ module.exports = function (args = {}) {
           },
           {
             path: 'angular2-template-loader'
-          }        
+          }
         ]
-      }),    
+      }),
 
       new ForkTsCheckerWebpackPlugin({
         checkSyntacticErrors: true,
@@ -423,10 +414,10 @@ module.exports = function (args = {}) {
         sourceMap: false
       }),
 
-      new ModuleConcatenationPlugin(), 
+      new ModuleConcatenationPlugin(),
 
       new HappyPack({
-        id: 'js',
+        id: 'js-ts',
         threads: Math.min(cpuCount - 1 /* at least 1 cpu for the fork-ts-checker-webpack-plugin */, 8 /* More than 8 threads probably will not improve the build speed */),
         loaders: [
           {
@@ -441,7 +432,7 @@ module.exports = function (args = {}) {
               configFile: tsConfigName,
               happyPackMode: true
             }
-          },  
+          },
           {
             path: 'angular-router-loader',
             query: {
@@ -449,7 +440,7 @@ module.exports = function (args = {}) {
               debug: true,
               loader: 'system'
             }
-          } 
+          }
         ]
       }),
 
