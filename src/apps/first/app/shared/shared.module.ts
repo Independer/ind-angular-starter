@@ -1,15 +1,12 @@
 import { NgModule } from '@angular/core';
-import { HttpModule } from '@angular/http';
 import { CommonModule } from '@angular/common';
 
 @NgModule({
   imports: [
-    CommonModule,
-    HttpModule
+    CommonModule
   ],
   exports: [
-    CommonModule,
-    HttpModule
+    CommonModule
   ],
   declarations: [],
   providers: []

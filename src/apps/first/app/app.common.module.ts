@@ -9,6 +9,7 @@
 
 import { NgModule } from '@angular/core';
 import { RouterModule, PreloadAllModules } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { ROUTES } from './app.routes';
 
@@ -21,6 +22,7 @@ import { SharedModule } from './shared';
 @NgModule({
   // bootstrap: [AppComponent],
   imports: [
+    HttpClientModule,
     SharedModule,
     RouterModule.forRoot(ROUTES, { preloadingStrategy: PreloadAllModules }),
     MetaModule.forRoot({

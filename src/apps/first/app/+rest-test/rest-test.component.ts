@@ -1,8 +1,8 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Injector } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/map';
-import { Http } from '@angular/http';
-import { ORIGIN_URL } from 'shared';
+import { ORIGIN_URL } from '@nguniversal/aspnetcore-engine/src/tokens';
 
 @Component({
   selector: 'app-rest-test',
@@ -12,12 +12,15 @@ export class RestTestComponent {
 
   public usersAsync: Promise<User[]>;
 
-  constructor(private http: Http, @Inject(ORIGIN_URL) private baseUrl: string) {
+  private baseUrl: string;
+
+  constructor(private http: HttpClient, private injector: Injector) {
+    this.baseUrl = injector.get(ORIGIN_URL);
     this.usersAsync = this.getUsers();
   }
 
-  private getUsers() {
-    return this.http.get(`${this.baseUrl}/api/test/users`).map(r => r.json() as User[]).toPromise();
+  private getUsers() {    
+    return this.http.get(`${this.baseUrl}/api/test/users`).map(r => r as User[]).toPromise();
   }
 }
 

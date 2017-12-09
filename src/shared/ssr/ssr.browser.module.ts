@@ -3,8 +3,8 @@ import { SsrState } from './ssr-state';
 import { SSR_STATE_KEY } from './ssr-state-key.constant';
 import { NotImplementedSsrData, ssrDataToken } from './ssr-data';
 import { PlatformService } from './platform.service';
-import { ORIGIN_URL } from './origin-url-token';
 import { LOCATION } from './location-info-token';
+import { ORIGIN_URL } from '@nguniversal/aspnetcore-engine/src/tokens';
 
 @NgModule({
   providers: [

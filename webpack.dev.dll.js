@@ -83,20 +83,14 @@ var bundles = {
     }
   ],
   vendor: [
-    {
-      name: '@angular/platform-browser',
-      path: '@angular/platform-browser/@angular/platform-browser/animations.es5.js'
-    },
+    '@angular/platform-browser',
     '@angular/platform-browser-dynamic',
     '@angular/core',
     '@angular/common',
     '@angular/forms',
     '@angular/http',
     '@angular/router',
-    {
-      name: '@angular/animations',
-      path: '@angular/animations/@angular/animations/browser.es5.js'
-    },
+    '@angular/animations',
     'rxjs',
     'tslib',
     '@ngx-meta/core'

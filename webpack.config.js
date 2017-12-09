@@ -12,7 +12,7 @@ const ModuleConcatenationPlugin = require('webpack/lib/optimize/ModuleConcatenat
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
@@ -320,19 +320,19 @@ module.exports = function (args = {}) {
       new HappyPack({
         id: 'js-ts',
         threads: Math.min(cpuCount - 1 /* at least 1 cpu for the fork-ts-checker-webpack-plugin */, 8 /* More than 8 threads probably will not improve the build speed */),
-        loaders: [
-          {
-            path: 'angular-router-loader',
-            query: {
-              debug: true,
-              loader: 'system'
-            }
-          },
+        loaders: [          
           {
             path: 'ts-loader',
             query: {
               configFile: tsConfigName,
               happyPackMode: true
+            }
+          },
+          {
+            path: 'angular-router-loader',
+            query: {
+              debug: false,
+              loader: 'system'
             }
           },
           {
@@ -437,66 +437,12 @@ module.exports = function (args = {}) {
             path: 'angular-router-loader',
             query: {
               aot: true,
-              debug: true,
+              debug: false,
               loader: 'system'
             }
           }
         ]
-      }),
-
-      // This plugin must be before webpack.optimize.UglifyJsPlugin.
-      new PurifyPlugin(),
-
-      // Description: Minimize all JavaScript output of chunks.
-      // Loaders are switched into minimizing mode.
-      // NOTE: To debug prod builds uncomment //debug lines and comment //prod lines
-      new UglifyJsPlugin({
-        // beautify: true, //debug
-        // mangle: false, //debug
-        // dead_code: false, //debug
-        // unused: false, //debug
-        // deadCode: false, //debug
-        // compress: {
-        //   screw_ie8: true,
-        //   keep_fnames: true,
-        //   drop_debugger: false,
-        //   dead_code: false,
-        //   unused: false
-        // }, // debug
-        // comments: true, //debug
-
-        parallel: {
-          cache: true,
-          workers: cpuCount
-        },
-        beautify: false, //prod
-        output: {
-          comments: false
-        }, //prod
-        mangle: {
-          screw_ie8: true
-        }, //prod
-        compress: {
-          screw_ie8: true,
-          warnings: false,
-          conditionals: true,
-          unused: true,
-          comparisons: true,
-          sequences: true,
-          dead_code: true,
-          evaluate: true,
-          if_return: true,
-          join_vars: true,
-          negate_iife: false, // we need this for lazy v8
-
-          pure_getters: true,
-
-          // PURE comments work best with 3 passes.
-          // See https://github.com/webpack/webpack/issues/2899#issuecomment-317425926.
-          // Using 1 pass for SSR because for some reason server-side rendering fails with "Cannot read property 'performance' of undefined" if `passes` is set to 3.
-          passes: isServer ? 1 : 3
-        },
-      }),
+      }),        
 
       new NormalModuleReplacementPlugin(
         /angular2-hmr/,
@@ -512,6 +458,41 @@ module.exports = function (args = {}) {
 
   if (!isDev && !isServer) {
     config.plugins = config.plugins.concat([
+      // This plugin must be UglifyJsPlugin.
+      new PurifyPlugin(),    
+
+      new UglifyJsPlugin({
+        sourceMap: false,
+        parallel: true,
+        uglifyOptions: {
+          ecma: 5,
+          warnings: false,
+          ie8: false,
+          mangle: {
+            safari10: true,
+          },
+          compress: {
+            // Disabled because of an issue with Mapbox GL when using the Webpack node global and UglifyJS:
+            // https://github.com/mapbox/mapbox-gl-js/issues/4359#issuecomment-303880888
+            // https://github.com/angular/angular-cli/issues/5804
+            // https://github.com/angular/angular-cli/pull/7931
+            typeofs : false,
+
+            pure_getters: true,
+  
+            // PURE comments work best with 3 passes.
+            // See https://github.com/webpack/webpack/issues/2899#issuecomment-317425926.
+            // Using 1 pass for SSR because for some reason server-side rendering fails with "Cannot read property 'performance' of undefined" if `passes` is set to 3.
+            passes: isServer ? 1 : 3
+          },
+          output: {
+            ascii_only: true,
+            comments: false,
+            webkit: true,
+          }
+        }        
+      }),
+
       new CompressionPlugin({
         asset: "[path].gz[query]",
         algorithm: "gzip",

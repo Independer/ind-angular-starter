@@ -119,7 +119,7 @@ module.exports = function (options) {
 
       // Provides context to Angular's use of System.import. See: https://github.com/angular/angular/issues/11580
       new ContextReplacementPlugin(
-        /angular(\\|\/)core(\\|\/)@angular/,
+        /angular(\\|\/)core(\\|\/)(@angular|esm5)/,
         helpers.root('src'), // location of your src
         {
           // your Angular Async Route paths relative to this root directory
