@@ -162,7 +162,7 @@ module.exports = function (args = {}) {
         {
           test: /\.(js|ts)$/,
           use: 'happypack/loader?id=js-ts',
-          exclude: [helpers.root('node_modules')]
+          exclude: isServer ? [helpers.root('node_modules')] : [] // Workaround the following error that happens when building a server bundle: " ./node_modules/domino/lib/sloppy.js: Module parse failed: 'with' in strict mode (12:8)"
         },
         {
           test: /\.css$/,
