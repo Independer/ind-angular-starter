@@ -548,8 +548,7 @@
         "constructor": "never",
         "asyncArrow": "always"
       }
-    ],
-    "typeof-compare": true,
+    ],    
     "import-spacing": true,
     "unified-signatures": false,
     "arrow-return-shorthand": [
