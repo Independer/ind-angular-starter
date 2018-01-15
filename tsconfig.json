@@ -13,6 +13,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "strict": true,
+    "alwaysStrict": false,
     "lib": [
       "es2015",
       "dom"
@@ -31,7 +32,6 @@
     }
   },
   "exclude": [
-    "node_modules",
     "wwwroot",
     "src/**/*.aot.ts",
     "src/**/**.aot.ts",
