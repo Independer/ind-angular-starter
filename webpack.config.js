@@ -29,13 +29,11 @@ const { PurifyPlugin } = require('@angular-devkit/build-optimizer');
 const apps = [
   {
     name: 'first',
-    baseUrl: '/first',
-    supportSsr: true
+    baseUrl: '/first'
   },
   {
     name: 'second',
-    baseUrl: '/second',
-    supportSsr: true
+    baseUrl: '/second'
   }
 ];
 
@@ -111,11 +109,7 @@ module.exports = function (args = {}) {
   config.entry = {};
 
   if (isServer) {
-    apps.forEach(function (app) {
-      if (app.supportSsr) {
-        config.entry[getAppBundleName(app)] = './src/apps/' + app.name + (isAot ? '/main.server.aot.ts' : '/main.server.ts');
-      }
-    });
+    config.entry['ssr'] = './src/apps/' + (isAot ? 'ssr-main.aot.ts' : 'ssr-main.ts');
   }
   else {
     config.entry['polyfills'] = './src/polyfills.browser.ts';

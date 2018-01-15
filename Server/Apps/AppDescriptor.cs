@@ -1,11 +1,11 @@
 namespace IndAngularStarter.Server.Apps {
   public class AppDescriptor {
-    public AppDescriptor(string bundlePrefix, string baseUrl) {
-      BundlePrefix = bundlePrefix;
+    public AppDescriptor(string id, string baseUrl) {
+      Id = id;
       BaseUrl = baseUrl;
     }
 
-    public string BundlePrefix { get; }
+    public string Id { get; }
     public string BaseUrl { get; }
   }
 }

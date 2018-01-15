@@ -13,7 +13,7 @@ namespace IndAngularStarter.Server.Ssr {
   public class SsrRenderer {
     private const int PrerenderTimeoutMilliseconds = 30000;
 
-    public static async Task<SsrResult> RenderAsync(HttpRequest request, string jsBundlePath, string appBaseUrl, SsrData data) {
+    public static async Task<SsrResult> RenderAsync(HttpRequest request, string jsBundlePath, string moduleName, string appBaseUrl, SsrData data) {
       // Based on https://github.com/MarkPieszak/aspnetcore-angular2-universal/blob/04273f64e122fa5648f4d21fab76da30163eedfd/Server/Controllers/HomeController.cs
 
       var nodeServices = request.HttpContext.RequestServices.GetRequiredService<INodeServices>();
@@ -34,7 +34,7 @@ namespace IndAngularStarter.Server.Ssr {
         var prerenderResult = await Prerenderer.RenderToString(
           "/",
           nodeServices,
-          new JavaScriptModuleExport(hostEnv.WebRootPath + "/" + jsBundlePath),
+          new JavaScriptModuleExport(hostEnv.WebRootPath + "/" + jsBundlePath) { ExportName = moduleName },
           unencodedAbsoluteUrl,
           appRelativeUrl,
           data,
