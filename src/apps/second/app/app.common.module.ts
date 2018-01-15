@@ -9,7 +9,6 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpModule } from '@angular/http';
 import { RouterModule, PreloadAllModules } from '@angular/router';
 import { AppComponent } from './app.component';
 import { ROUTES } from './app.routes';
@@ -19,10 +18,12 @@ import { NoContentComponent } from './no-content/no-content.component';
 import { MetaLoader, MetaModule, MetaStaticLoader, PageTitlePositioning } from '@ngx-meta/core';
 import { AboutModule, AboutService, XLargeModule } from 'shared';
 import { SharedModule } from './shared';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   // bootstrap: [AppComponent],
   imports: [
+    HttpClientModule,
     SharedModule,
     RouterModule.forRoot(ROUTES, { preloadingStrategy: PreloadAllModules }),
     MetaModule.forRoot({

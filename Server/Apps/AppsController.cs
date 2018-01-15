@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IndAngularStarter.Server.Apps {
   public class AppsController : Controller {
-    private const string serverBundleUrlTemplate = "serverdist/{0}.js";
+    private const string serverBundleUrl = "serverdist/ssr.js";
     private const string mainBundleUrlTemplate = "~/dist/{0}.js";
 
     private readonly IHostingEnvironment env;
@@ -35,7 +35,7 @@ namespace IndAngularStarter.Server.Apps {
 
     private async Task<AppPageViewModel> CreateAppModel(AppDescriptor app) {
       var ssrResult = await PrerenderIfNeeded(app);
-      var mainBundleUrl = string.Format(mainBundleUrlTemplate, app.BundlePrefix);
+      var mainBundleUrl = string.Format(mainBundleUrlTemplate, app.Id);
 
       var model = new AppPageViewModel(mainBundleUrl, app.BaseUrl, ssrResult);
 
@@ -49,17 +49,17 @@ namespace IndAngularStarter.Server.Apps {
 
       SsrResult ssrResult = null;
 
-      var ssrBundleUrl = string.Format(serverBundleUrlTemplate, app.BundlePrefix);
-      var serverRenderingModuleFile = env.WebRootFileProvider.GetFileInfo(ssrBundleUrl);
+      var ssrBundleUrl = string.Format(serverBundleUrl, app.Id);
+      var ssrBundleFile = env.WebRootFileProvider.GetFileInfo(ssrBundleUrl);
 
-      logger.LogInformation($"[SSR] Bundle URL: {ssrBundleUrl}. Resolved file path: {serverRenderingModuleFile.PhysicalPath}");
+      logger.LogInformation($"[SSR] Bundle URL: {serverBundleUrl}. Resolved file path: {ssrBundleFile.PhysicalPath}");
 
-      if (serverRenderingModuleFile.Exists) {
+      if (ssrBundleFile.Exists) {
         var data = new SsrData {
           baseUrl = app.BaseUrl
         };
 
-        ssrResult = await SsrRenderer.RenderAsync(Request, ssrBundleUrl, app.BaseUrl, data);
+        ssrResult = await SsrRenderer.RenderAsync(Request, serverBundleUrl, app.Id, app.BaseUrl, data);
 
         if (ssrResult != null) {
           logger.LogInformation("[SSR] Success");
