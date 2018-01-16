@@ -1,6 +1,4 @@
 import { NgModule } from '@angular/core';
-import { SsrStateInjector } from './ssr-state-injector';
-import { SsrState } from '../ssr-state';
 import { PlatformService } from '../platform.service';
 
 @NgModule({
@@ -13,8 +11,6 @@ export class SsrServerModule {
     return {
       ngModule: SsrServerModule,
       providers: [
-        SsrState,
-        SsrStateInjector
       ]
     };
   }

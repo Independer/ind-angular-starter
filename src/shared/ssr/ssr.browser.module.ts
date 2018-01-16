@@ -1,6 +1,4 @@
 import { NgModule } from '@angular/core';
-import { SsrState } from './ssr-state';
-import { SSR_STATE_KEY } from './ssr-state-key.constant';
 import { NotImplementedSsrData, ssrDataToken } from './ssr-data';
 import { PlatformService } from './platform.service';
 import { ORIGIN_URL } from './origin-url-token';
@@ -17,10 +15,6 @@ export class SsrBrowserModule {
       ngModule: SsrBrowserModule,
       providers: [
         {
-          provide: SsrState,
-          useFactory: getBrowserSsrState
-        },
-        {
           provide: ssrDataToken,
           useFactory: getBrowserSsrData
         },
@@ -34,12 +28,6 @@ export class SsrBrowserModule {
       ]
     };
   }
-}
-
-export function getBrowserSsrState(): SsrState {
-  const ssrState = new SsrState();
-  ssrState.initialize((window as any)[SSR_STATE_KEY] || {});
-  return ssrState;
 }
 
 export function getBrowserOriginUrl() {
